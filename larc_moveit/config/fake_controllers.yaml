@@ -1,0 +1,9 @@
+controller_list:
+  - name: fake_all_controller
+    joints:
+      - rotating_base
+      - zipper
+      - shoulder
+      - elbow
+      - wrist_x
+      - wrist_y
