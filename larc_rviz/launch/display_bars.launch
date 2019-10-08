@@ -1,0 +1,32 @@
+<launch>
+  <arg
+    name="model" />
+  <arg
+    name="gui"
+    default="True" />
+  <param
+    name="robot_description"
+    textfile="$(find larc_robot_description)/urdf/larc_robot_description.urdf" />
+  <param
+    name="use_gui"
+    value="$(arg gui)" />
+  <node
+    name="joint_state_publisher"
+    pkg="joint_state_publisher"
+    type="joint_state_publisher"
+     />
+  <node
+    name="robot_state_publisher"
+    pkg="robot_state_publisher"
+    type="state_publisher" />
+  <node
+    name="rviz"
+    pkg="rviz"
+    type="rviz" 
+    args=" -d $(find larc_rviz)/config/display_bars.rviz"/>
+<!-- 
+    <node pkg="tf2_ros" type="static_transform_publisher" name="camera_to_robot" args="0.02 0 -0.085 0 0.19 0.05 link_12 camera_link" /> -->
+
+   <!-- wrist_x = 0.47
+   wrist_y = 0.07  -->
+</launch>

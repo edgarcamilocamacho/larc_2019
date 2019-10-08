@@ -1,0 +1,605 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<robot name="larc_robot_description">
+
+  <link name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.0007009 0.001235 0.10504"
+        rpy="0 0 0" />
+      <mass
+        value="2.889" />
+      <inertia
+        ixx="0.01011"
+        ixy="1.2009E-09"
+        ixz="6.926E-10"
+        iyy="0.010102"
+        iyz="1.4387E-09"
+        izz="0.018102" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.90588 0 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="link_wheel_1">
+    <inertial>
+      <origin
+        xyz="0.020161 -0.00045762 -0.0013655"
+        rpy="0 0 0" />
+      <mass
+        value="0.50286" />
+      <inertia
+        ixx="0.00098271"
+        ixy="1.166E-17"
+        ixz="-7.3594E-18"
+        iyy="0.00056179"
+        iyz="-4.1613E-20"
+        izz="0.00056179" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_wheel_1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0 0.75294 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_wheel_1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="wheel1" type="continuous">
+    <origin
+      xyz="-0.14101 0.00042922 0.056131"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="link_wheel_1" />
+    <axis
+      xyz="1 0 0" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+
+  <link name="link_wheel_2">
+    <inertial>
+      <origin
+        xyz="-0.000339407879815295 0.02004238131964 -0.00136551806008206"
+        rpy="0 0 0" />
+      <mass
+        value="0.502855886504197" />
+      <inertia
+        ixx="0.000561794786868209"
+        ixy="7.51895569517464E-20"
+        ixz="-2.59772159407109E-34"
+        iyy="0.000982706116200826"
+        iyz="-1.45822039942642E-18"
+        izz="0.000561794786868209" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_wheel_2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0 0.752941176470588 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_wheel_2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="wheel2" type="continuous">
+    <origin
+      xyz="-6.8027E-05 -0.1411 0.057612"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="link_wheel_2" />
+    <axis
+      xyz="0 1 0" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+
+  <link name="link_wheel_3">
+    <inertial>
+      <origin
+        xyz="0.0205 2.3384994028014E-14 6.93889390390723E-17"
+        rpy="0 0 0" />
+      <mass
+        value="0.502855886504196" />
+      <inertia
+        ixx="0.000982706116200826"
+        ixy="-7.51895569517464E-20"
+        ixz="-1.51916017433259E-18"
+        iyy="0.000561794786868209"
+        iyz="-1.22627570677781E-34"
+        izz="0.000561794786868209" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_wheel_3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0 0.752941176470588 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_wheel_3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="wheel3" type="continuous">
+    <origin
+      xyz="0.09965 0.0003109 0.0563"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="link_wheel_3" />
+    <axis
+      xyz="1 0 0" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+
+  <link name="link_wheel_4">
+    <inertial>
+      <origin
+        xyz="-1.12941340307815E-14 0.020500000000011 -2.98580604685128E-14"
+        rpy="0 0 0" />
+      <mass
+        value="0.502855886504197" />
+      <inertia
+        ixx="0.000561794786868209"
+        ixy="9.11607153056694E-37"
+        ixz="-5.89348963826831E-37"
+        iyy="0.000982706116200826"
+        iyz="-1.45822039942642E-18"
+        izz="0.000561794786868209" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_wheel_4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0 0.752941176470588 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_wheel_4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="wheel4" type="continuous">
+    <origin
+      xyz="-0.00038217 0.099439 0.056246"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="link_wheel_4" />
+    <axis
+      xyz="0 1 0" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+
+  <link name="link_rotating_base">
+    <inertial>
+      <origin
+        xyz="2.59666420310278E-17 -3.25260651745651E-18 -0.00199999999999997"
+        rpy="0 0 0" />
+      <mass
+        value="0.159971725666118" />
+      <inertia
+        ixx="0.000533546613063244"
+        ixy="5.37667397666411E-21"
+        ixz="-4.03058545088596E-21"
+        iyy="0.000533546613063244"
+        iyz="-8.21553363704842E-21"
+        izz="0.00106666663485805" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_rotating_base.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_rotating_base.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="rotating_base" type="revolute">
+    <origin
+      xyz="-0.0003502 -0.00056066 0.14621"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="link_rotating_base" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-3.14"
+      upper="3.14"
+      effort="3.1"
+      velocity="7" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+
+  <link name="link_zipper">
+    <inertial>
+      <origin
+        xyz="0.0997852492160236 -0.0418712470067769 0.00454384995334384"
+        rpy="0 0 0" />
+      <mass
+        value="0.618526009233702" />
+      <inertia
+        ixx="0.00197333990930959"
+        ixy="4.10075659751431E-06"
+        ixz="2.16435070120201E-07"
+        iyy="0.000606064173307816"
+        iyz="-7.21645078614296E-05"
+        izz="0.00240018329433446" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_zipper.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_zipper.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="zipper" type="prismatic">
+    <origin
+      xyz="-0.09996 0.10016 0.026666"
+      rpy="0 0 0" />
+    <parent
+      link="link_rotating_base" />
+    <child
+      link="link_zipper" />
+    <axis
+      xyz="0 1 0" />
+    <limit
+      lower="0.0"
+      upper="0.16"
+      effort="3.1"
+      velocity="7" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+
+  <link name="link_shoulder">
+    <inertial>
+      <origin
+        xyz="5.84384970969687E-17 2.77555756156289E-17 0.105726024491764"
+        rpy="0 0 0" />
+      <mass
+        value="0.194191541923691" />
+      <inertia
+        ixx="0.000301442784330269"
+        ixy="-2.11758236813575E-20"
+        ixz="-3.39724482279049E-20"
+        iyy="0.000429950110550485"
+        iyz="-4.34462320805404E-20"
+        izz="0.000159590805283899" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_shoulder.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.729411764705882 0.356862745098039 0.0235294117647059 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_shoulder.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="shoulder" type="revolute">
+    <origin
+      xyz="0.09962 0.013292 0.045134"
+      rpy="0 0 0.0029992" />
+    <parent
+      link="link_zipper" />
+    <child
+      link="link_shoulder" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-2.6"
+      upper="2.6"
+      effort="3.1"
+      velocity="7" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+
+  <link name="link_elbow">
+    <inertial>
+      <origin
+        xyz="-0.00150000000000004 6.93889390390723E-17 0.114437734633691"
+        rpy="0 0 0" />
+      <mass
+        value="0.116156099382592" />
+      <inertia
+        ixx="0.000282205692339256"
+        ixy="2.75285707857648E-21"
+        ixz="1.06157121423655E-19"
+        iyy="0.000321992012176196"
+        iyz="3.41885999911415E-20"
+        izz="5.79537330340457E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_elbow.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_elbow.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="elbow" type="revolute">
+    <origin
+      xyz="0.0015 0 0.1395"
+      rpy="0 0 0" />
+    <parent
+      link="link_shoulder" />
+    <child
+      link="link_elbow" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-2.6"
+      upper="2.6"
+      effort="3.1"
+      velocity="7" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+
+  <link name="link_wrist_x">
+    <inertial>
+      <origin
+        xyz="0.0462179712457425 -3.33066907387547E-16 0.00757600236130149"
+        rpy="0 0 0" />
+      <mass
+        value="0.0734418604544087" />
+      <inertia
+        ixx="1.56551731707426E-05"
+        ixy="-3.00186718951297E-21"
+        ixz="2.96747066068271E-06"
+        iyy="4.64159836533294E-05"
+        iyz="-8.8758056104872E-22"
+        izz="4.26152498612371E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_wrist_x.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_wrist_x.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="wrist_x" type="revolute">
+    <origin
+      xyz="-0.0019382 6.8796E-05 0.1655"
+      rpy="1.5708 0 3.1416" />
+    <parent
+      link="link_elbow" />
+    <child
+      link="link_wrist_x" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-2.6"
+      upper="2.6"
+      effort="3.1"
+      velocity="7" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+
+  <link name="link_wrist_y">
+    <inertial>
+      <origin
+        xyz="-0.0131844541976823 0.00564526697642653 0.0457821049582453"
+        rpy="0 0 0" />
+      <mass
+        value="0.0964347160248947" />
+      <inertia
+        ixx="2.89008345555284E-05"
+        ixy="-9.30583763123157E-09"
+        ixz="-7.6152167469258E-09"
+        iyy="2.64426644877419E-05"
+        iyz="-1.22309375219652E-06"
+        izz="2.48637691086818E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_wrist_y.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0.501960784313725 0.501960784313725 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://larc_robot_description/meshes/link_wrist_y.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint name="wrist_y" type="revolute">
+    <origin
+      xyz="0.066562 0 0.0066812"
+      rpy="0 0 -3.1416" />
+    <parent
+      link="link_wrist_x" />
+    <child
+      link="link_wrist_y" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-2.6"
+      upper="2.6"
+      effort="3.1"
+      velocity="7" />
+    <safety_controller
+      k_velocity="0" />
+  </joint>
+
+</robot>
