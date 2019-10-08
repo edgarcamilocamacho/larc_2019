@@ -1,0 +1,58 @@
+<launch>
+  <arg
+    name="model" />
+  <arg
+    name="gui"
+    default="False" />
+  <param
+    name="robot_description"
+    textfile="$(find larc_robot_description)/urdf/larc_robot_description.urdf" />
+  <param
+    name="use_gui"
+    value="$(arg gui)" />
+    <node name="dynamixel_manager" pkg="dynamixel_controllers" type="controller_manager.py" required="true" output="screen">
+        <rosparam>
+            namespace: dxl_manager
+            serial_ports:
+                pan_tilt_port:
+                    port_name: "/dev/ttyUSB0"
+                    baud_rate: 1000000
+                    min_motor_id: 0
+                    max_motor_id: 15
+                    update_rate: 50
+        </rosparam>
+    </node>
+
+  <rosparam file="$(find larc_motors_control)/config/robot_description.yaml" command="load"/>
+  <node name="tilt_controller_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
+        args="--manager=dxl_manager
+              --port pan_tilt_port
+              gripper
+              wrist_y
+              wrist_x
+              elbow
+              shoulder
+              zipper
+              rotating_base
+              wheel1
+              wheel2
+              wheel3
+              wheel4"
+        output="screen"/>
+
+  <node
+    name="robot_state_publisher"
+    pkg="robot_state_publisher"
+    type="state_publisher" />
+  <node
+    name="dynamixel_joint_state_publisher"
+    pkg="dynamixel_controllers"
+    type="dynamixel_joint_state_publisher.py"
+    output="screen" />
+
+    <node
+    name="speed_controller"
+    pkg="dynamixel_controllers"
+    type="speed_controller.py" />
+
+</launch>

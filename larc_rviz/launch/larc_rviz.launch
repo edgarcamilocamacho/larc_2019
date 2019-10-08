@@ -1,0 +1,22 @@
+<launch>
+  <arg
+    name="model" />
+  <arg
+    name="gui"
+    default="False" />
+  <param
+    name="robot_description"
+    textfile="$(find larc_robot_description)/urdf/larc_robot_description.urdf" />
+  <param
+    name="use_gui"
+    value="$(arg gui)" />
+  
+   <node
+    name="rviz"
+    pkg="rviz"
+    type="rviz" 
+    args=" -d $(find larc_rviz)/config/larc_rviz.rviz"/>
+
+ <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="camera_to_robot" args="0.02 0 -0.085 0 0.19 0.05 link_12 camera_link" /> -->
+
+</launch>

@@ -1,0 +1,151 @@
+gripper:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller
+        type: JointPositionController
+    joint_name: gripper
+    joint_speed: 1.17
+    motor:
+        id: 7
+        init: 0
+        min: 0
+        max: 1023
+
+wrist_y:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller
+        type: JointPositionController
+    joint_name: wrist_y
+    joint_speed: 1.17
+    motor:
+        id: 6
+        init: 512
+        min: 0
+        max: 1023
+
+wrist_x:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller
+        type: JointPositionController
+    joint_name: wrist_x
+    joint_speed: 1.17
+    motor:
+        id: 5
+        init: 512
+        min: 0
+        max: 1023
+
+elbow:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller_dual_motor
+        type: JointPositionControllerDual
+    joint_name: elbow
+    joint_speed: 1.17
+    same_direction: true
+    motor_master:
+        id: 4
+        init: 512
+        min: 0
+        max: 1023
+    motor_slave:
+        id: 3
+
+shoulder:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller_dual_motor
+        type: JointPositionControllerDual
+    joint_name: shoulder
+    joint_speed: 1.17
+    same_direction: true
+    motor_master:
+        id: 1
+        init: 512
+        min: 0
+        max: 1023
+    motor_slave:
+        id: 2
+    motor_slave2:
+        id: 0
+
+zipper:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller
+        type: JointPositionController
+    joint_name: zipper
+    joint_speed: 1.17
+    motor:
+        id: 15
+        init: 0
+        min: 0
+        max: 5400
+        scale: 52.36
+
+rotating_base:
+    controller:
+        package: dynamixel_controllers
+        module: joint_position_controller
+        type: JointPositionController
+    joint_name: rotating_base
+    joint_speed: 0.314
+    motor:
+        id: 9
+        init: 2048
+        min: 0
+        max: 4095
+
+wheel1:
+    controller:
+        package: dynamixel_controllers
+        module: joint_torque_controller
+        type: JointTorqueController
+    joint_name: wheel1
+    joint_speed: 1.0
+    motor:
+        id: 13
+        init: 0
+        min: 0
+        max: 1023
+
+wheel2:
+    controller:
+        package: dynamixel_controllers
+        module: joint_torque_controller
+        type: JointTorqueController
+    joint_name: wheel2
+    joint_speed: 1.0
+    motor:
+        id: 11
+        init: 0
+        min: 0
+        max: 1023
+
+wheel3:
+    controller:
+        package: dynamixel_controllers
+        module: joint_torque_controller
+        type: JointTorqueController
+    joint_name: wheel3
+    joint_speed: 1.0
+    motor:
+        id: 12
+        init: 0
+        min: 0
+        max: 1023
+
+wheel4:
+    controller:
+        package: dynamixel_controllers
+        module: joint_torque_controller
+        type: JointTorqueController
+    joint_name: wheel4
+    joint_speed: 1.0
+    motor:
+        id: 10  
+        init: 0
+        min: 0
+        max: 1023

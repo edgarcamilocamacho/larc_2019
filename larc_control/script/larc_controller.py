@@ -38,7 +38,7 @@ class LarcGuiController(QMainWindow):
         ### ROS ###
         rospy.init_node('larc_controller')
         self.pub_cmd_vel = rospy.Publisher("/cmd_vel", Vector3, queue_size = 1)
-        self.pub_base = rospy.Publisher("/base/command", Float64, queue_size = 1)
+        self.pub_base = rospy.Publisher("/rotating_base/command", Float64, queue_size = 1)
         self.pub_zipper = rospy.Publisher("/zipper/command", Float64, queue_size = 1)
         self.pub_shoulder = rospy.Publisher("/shoulder/command", Float64, queue_size = 1)
         self.pub_elbow = rospy.Publisher("/elbow/command", Float64, queue_size = 1)
@@ -46,7 +46,7 @@ class LarcGuiController(QMainWindow):
         self.pub_wrist_y = rospy.Publisher("/wrist_y/command", Float64, queue_size = 1)
         self.pub_gripper = rospy.Publisher("/gripper/command", Float64, queue_size = 1)
 
-        self.srv_tor_base = rospy.ServiceProxy('/base/torque_enable', TorqueEnable)
+        self.srv_tor_base = rospy.ServiceProxy('/rotating_base/torque_enable', TorqueEnable)
         self.srv_tor_zipper = rospy.ServiceProxy('/zipper/torque_enable', TorqueEnable)
         self.srv_tor_shoulder = rospy.ServiceProxy('/shoulder/torque_enable', TorqueEnable)
         self.srv_tor_elbow = rospy.ServiceProxy('/elbow/torque_enable', TorqueEnable)
@@ -67,6 +67,12 @@ class LarcGuiController(QMainWindow):
         self.btn_control.clicked.connect(self.btn_control_clicked)
         self.btn_update.clicked.connect(self.btn_update_clicked)
         self.btn_pub_base.clicked.connect(self.btn_pub_base_clicked)
+        self.btn_pub_zipper.clicked.connect(self.btn_pub_zipper_clicked)
+        self.btn_pub_shoulder.clicked.connect(self.btn_pub_shoulder_clicked)
+        self.btn_pub_elbow.clicked.connect(self.btn_pub_elbow_clicked)
+        self.btn_pub_wrist_x.clicked.connect(self.btn_pub_wrist_x_clicked)
+        self.btn_pub_wrist_y.clicked.connect(self.btn_pub_wrist_y_clicked)
+        self.btn_pub_gripper.clicked.connect(self.btn_pub_gripper_clicked)
         ## Checks
         self.check_tor_base.stateChanged.connect(self.check_tor_base_stateChanged)
         self.check_tor_zipper.stateChanged.connect(self.check_tor_zipper_stateChanged)
@@ -85,8 +91,19 @@ class LarcGuiController(QMainWindow):
     ### SLOTS
     ## Buttons
     def btn_pub_base_clicked(self):
-        print(self.spin_base.value())
         self.pub_base.publish(self.spin_base.value())
+    def btn_pub_zipper_clicked(self):
+        self.pub_zipper.publish(self.spin_zipper.value())
+    def btn_pub_shoulder_clicked(self):
+        self.pub_shoulder.publish(self.spin_shoulder.value())
+    def btn_pub_elbow_clicked(self):
+        self.pub_elbow.publish(self.spin_elbow.value())
+    def btn_pub_wrist_x_clicked(self):
+        self.pub_wrist_x.publish(self.spin_wrist_x.value())
+    def btn_pub_wrist_y_clicked(self):
+        self.pub_wrist_y.publish(self.spin_wrist_y.value())   
+    def btn_pub_gripper_clicked(self):
+        self.pub_gripper.publish(self.spin_gripper.value())   
     def btn_control_clicked(self):
         self.setFocus()
     def btn_update_clicked(self):
@@ -94,7 +111,7 @@ class LarcGuiController(QMainWindow):
             if name=='base':
                 self.spin_base.setValue(round(self.joint_states.position[i],2))
             if name=='zipper':
-                self.spin_zipper.setValue(round(self.joint_states.position[i],2))
+                self.spin_zipper.setValue(round(self.joint_states.position[i],3))
             if name=='shoulder':
                 self.spin_shoulder.setValue(round(self.joint_states.position[i],2))
             if name=='elbow':

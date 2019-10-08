@@ -476,7 +476,7 @@
     <child
       link="link_elbow" />
     <axis
-      xyz="1 0 0" />
+      xyz="-1 0 0" />
     <limit
       lower="-2.6"
       upper="2.6"
