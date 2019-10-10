@@ -1,0 +1,13 @@
+For GPIO access create the file /etc/udev/rules.d/50-gpio.rules with the following contents:
+
+SUBSYSTEM=="gpio*", PROGRAM="/bin/sh -c '\
+        chown -R root:gpiouser /sys/class/gpio && chmod -R 770 /sys/class/gpio;\
+        chown -R root:gpiouser /sys/devices/virtual/gpio && chmod -R 770 /sys/devices/virtual/gpio;\
+        chown -R root:gpiouser /sys$devpath && chmod -R 770 /sys$devpath\
+'"
+
+
+
+
+sudo groupadd gpiouser
+sudo adduser "$USER" gpiouser

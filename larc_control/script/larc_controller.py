@@ -5,6 +5,7 @@ import numpy as np
 import yaml
 
 import rospy
+import tf
 import rospkg
 from std_msgs.msg import Float64, String
 from sensor_msgs.msg import JointState
@@ -34,7 +35,8 @@ class LarcGuiController(QMainWindow):
                             QtCore.Qt.Key_Q:False,
                             QtCore.Qt.Key_E:False, }
         self.joint_states = None
-        
+        self.L = 0
+
         ### ROS ###
         rospy.init_node('larc_controller')
         self.pub_cmd_vel = rospy.Publisher("/cmd_vel", Vector3, queue_size = 1)
@@ -56,6 +58,9 @@ class LarcGuiController(QMainWindow):
 
         self.sub_state_base = rospy.Subscriber('/joint_states', JointState, self.sub_state_base_callback)
         
+        self.tf_listener = tf.TransformListener()
+        self.ros_rate = rospy.Rate(10.0)
+
         ### OBJECTS
         ## Timers
         self.timer_keys = QTimer()
@@ -66,6 +71,7 @@ class LarcGuiController(QMainWindow):
         ## Buttons
         self.btn_control.clicked.connect(self.btn_control_clicked)
         self.btn_update.clicked.connect(self.btn_update_clicked)
+        self.btn_update_l.clicked.connect(self.btn_update_l_clicked)
         self.btn_pub_base.clicked.connect(self.btn_pub_base_clicked)
         self.btn_pub_zipper.clicked.connect(self.btn_pub_zipper_clicked)
         self.btn_pub_shoulder.clicked.connect(self.btn_pub_shoulder_clicked)
@@ -81,6 +87,8 @@ class LarcGuiController(QMainWindow):
         self.check_tor_wrist_x.stateChanged.connect(self.check_tor_wrist_x_stateChanged)
         self.check_tor_wrist_y.stateChanged.connect(self.check_tor_wrist_y_stateChanged)
         self.check_tor_gripper.stateChanged.connect(self.check_tor_gripper_stateChanged)
+        ## Sliders
+        self.slider_dx.valueChanged.connect(self.slider_dx_valueChanged)
 
         self.setFocus()
 
@@ -89,7 +97,25 @@ class LarcGuiController(QMainWindow):
         self.joint_states = msg
     
     ### SLOTS
+    ## Sliders
+    def slider_dx_valueChanged(self, value):
+        dx = value/1000.0
+        alpha = np.arctan(dx/self.L)
+        dl = np.sqrt(dx**2+self.L**2)-self.L
+        self.pub_base.publish(-alpha)
+        self.pub_wrist_y.publish(-1.57-alpha)  
+        self.pub_zipper.publish(dl)
     ## Buttons
+    def btn_update_l_clicked(self):
+        while True:
+            try:
+                (trans,rot) = self.tf_listener.lookupTransform('/base_link', '/link_wrist_x', rospy.Time(0))
+                print( "Distance in y is = {0:f}".format( abs(trans[1]) ) )
+                self.L = abs(trans[1])
+                break
+            except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+                continue
+        self.ros_rate.sleep()
     def btn_pub_base_clicked(self):
         self.pub_base.publish(self.spin_base.value())
     def btn_pub_zipper_clicked(self):
