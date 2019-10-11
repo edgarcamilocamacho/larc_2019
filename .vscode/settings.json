@@ -3,5 +3,6 @@
         "/home/camilo/ros/larc_ws/devel/lib/python2.7/dist-packages",
         "/opt/ros/kinetic/lib/python2.7/dist-packages",
         "/home/camilo/repos/IODynamixel/src"
-    ]
+    ],
+    "ros.distro": "kinetic"
 }

@@ -14,6 +14,7 @@ from std_msgs.msg import String
 from sensor_msgs.msg import JointState
 from moveit_msgs.msg import ExecuteTrajectoryActionGoal
 from moveit_msgs.msg import RobotState
+from std_msgs.msg import Float64, String
 
 node_name = 'poppy_control_moveit'
 group_id = 'all'
@@ -31,6 +32,8 @@ group.set_planning_time(5)
 display_trajectory_publisher = rospy.Publisher('/move_group/display_planned_path', \
                                                moveit_msgs.msg.DisplayTrajectory, \
                                                queue_size=20)
+
+pub_gripper = rospy.Publisher("/gripper/command", Float64, queue_size = 1)
 
 rospy.loginfo(rospy.get_caller_id() + ' Ready!')
 
@@ -92,10 +95,26 @@ def execute_plan(plan, wait=True):
         return 
     group.execute(plan, wait=wait)
 
-# jv = [0.0, 0.1, -0.3, 1.1, 0.1, 0.0]
+def go_to_pos(jv):
+    execute_plan( plan_to_joint_values( jv ) )
+
+# while(True):
+#     go_to_pos([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+#     time.sleep(4)
+#     go_to_pos([0.0, 0.1, -0.3, 1.1, 0.1, 1.57])
+#     time.sleep(4)
+
+# go_to_pos([0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+# go_to_pos([0.0, 0.1, -0.3, 1.1, 0.1, 1.57])
+
+# jv = [0.0, 0.1, -0.3, 1.1, 0.1, 1.57]
+# jv = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+# jv = [0.0, 0.0, 0.0, 0.0, 0.0, 0.1]
 # execute_plan( plan_to_joint_values( jv ) )
 
 # pose = current_pose()
 # pose.position.x += 0.01
 # plan = plan_to_pose(pose)
 # execute_plan(plan)
+
+# pub_gripper.publish(0.2)   

@@ -233,6 +233,10 @@ class JointTrajectoryActionController():
         
         self.trajectory = trajectory
         traj_start_time = rospy.Time.now()
+
+        # print("#######################")
+        # print("trajectory:")
+        # print(trajectory)
         
         for seg in range(len(trajectory)):
             rospy.logdebug('current segment is %d time left %f cur time %f' % (seg, durations[seg] - (time.to_sec() - trajectory[seg].start_time), time.to_sec()))
@@ -264,14 +268,40 @@ class JointTrajectoryActionController():
                     if hasattr(self.joint_to_controller[joint], "master_id"):
                         master_id = self.joint_to_controller[joint].master_id
                         slave_id = self.joint_to_controller[joint].slave_id
-                        master_pos, slave_pos = self.joint_to_controller[joint].pos_rad_to_raw(desired_position)
+                        # master_pos, slave_pos = self.joint_to_controller[joint].pos_rad_to_raw(desired_position)
+                        raw = self.joint_to_controller[joint].pos_rad_to_raw(desired_position)
+                        # print( '##################################:' )
+                        # print( 'master_id:' )
+                        # print(master_id)
+                        # print( 'slave_id:' )
+                        # print(slave_id)
+                        # print( 'joints:' )
+                        # print(joints)
+                        # print( 'joint:' )
+                        # print(joint)
+                        # if joint == 'zipper':
+                        #     print( 'desired_position:' )
+                        #     print(desired_position)
+                        #     print( 'master_pos, slave_pos:' )
+                        #     print(raw)
+                        master_pos = raw[0]
+                        slave_pos = raw[1]
                         spd = self.joint_to_controller[joint].spd_rad_to_raw(desired_velocity)
                         vals.append((master_id, master_pos, spd))
                         vals.append((slave_id, slave_pos, spd))
                     else:
                         motor_id = self.joint_to_controller[joint].motor_id
-                        pos = self.joint_to_controller[joint].pos_rad_to_raw(desired_position)
-                        spd = self.joint_to_controller[joint].spd_rad_to_raw(desired_velocity)
+                        if joint=="zipper":
+                            pos = self.joint_to_controller[joint].pos_rad_to_raw(52.36*desired_position)
+                            spd = self.joint_to_controller[joint].spd_rad_to_raw(52.36*desired_velocity/3.0)
+                        else:
+                            pos = self.joint_to_controller[joint].pos_rad_to_raw(desired_position)
+                            spd = self.joint_to_controller[joint].spd_rad_to_raw(desired_velocity)                        
+                        if joint=="zipper":
+                            print("desired_position " + str(desired_position))
+                            print("pos " + str(pos))
+                            print("desired_velocity " + str(desired_velocity))
+                            print("spd " + str(spd))
                         vals.append((motor_id, pos, spd))
                     
                 multi_packet[port] = vals

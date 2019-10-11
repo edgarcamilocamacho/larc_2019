@@ -59,17 +59,28 @@ shoulder:
         module: joint_position_controller_dual_motor
         type: JointPositionControllerDual
     joint_name: shoulder
-    joint_speed: 1.17
-    same_direction: true
+    joint_speed: 0.314
+    same_direction: false
     motor_master:
         id: 1
-        init: 512
+        init: 2048
         min: 0
-        max: 1023
+        max: 4095
     motor_slave:
-        id: 2
-    motor_slave2:
         id: 0
+
+# shoulder:
+#     controller:
+#         package: dynamixel_controllers
+#         module: joint_position_controller
+#         type: JointPositionController
+#     joint_name: shoulder
+#     joint_speed: 0.314
+#     motor:
+#         id: 1
+#         init: 2048
+#         min: 0
+#         max: 4095
 
 zipper:
     controller:

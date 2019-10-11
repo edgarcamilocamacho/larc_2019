@@ -1,0 +1,13 @@
+  controller_manager_ns: ''
+  controller_list:
+    - name: robotic_arm_controller
+      action_ns: follow_joint_trajectory
+      type: FollowJointTrajectory
+      default: true
+      joints:
+        - wrist_y
+        - wrist_x
+        - elbow
+        - shoulder
+        - zipper
+        - rotating_base

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-ROBOT_IP="192.168.20.77"
-ROBOT_USER="larc"
-ROBOT_PASS="123456789"
+ROBOT_IP="192.168.20.100"
+ROBOT_USER="up"
+ROBOT_PASS="up"
 WORKSPACE="/home/${ROBOT_USER}/ros/larc_ws"
-TO_COPY="dynamixel_controllers larc_settings larc_vision larc_control larc_rviz larc_robot_description larc_motors_control startUSB.sh"
+TO_COPY="dynamixel_controllers larc_moveit larc_settings larc_vision larc_control larc_rviz larc_robot_description larc_motors_control startUSB.sh"
 ROBOT_ROS="kinetic"
 
 PACKAGE=${PWD##*/}

@@ -23,7 +23,7 @@
         </rosparam>
     </node>
 
-  <rosparam file="$(find larc_motors_control)/config/robot_description.yaml" command="load"/>
+  <rosparam file="$(find larc_motors_control)/config/position_controllers.yaml" command="load"/>
   <node name="tilt_controller_spawner" pkg="dynamixel_controllers" type="controller_spawner.py"
         args="--manager=dxl_manager
               --port pan_tilt_port
@@ -38,6 +38,20 @@
               wheel2
               wheel3
               wheel4"
+        output="screen"/>
+
+  <rosparam file="$(find larc_motors_control)/config/trajectory_controllers.yaml" command="load"/>
+  <node name="tilt_controller_spawner_meta" pkg="dynamixel_controllers" type="controller_spawner.py"
+        args="--manager=dxl_manager
+              --type=meta
+              robotic_arm_controller
+              wrist_y
+              wrist_x
+              elbow
+              shoulder
+              zipper
+              rotating_base
+              "
         output="screen"/>
 
   <node

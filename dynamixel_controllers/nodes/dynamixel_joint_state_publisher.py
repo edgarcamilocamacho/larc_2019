@@ -45,7 +45,8 @@ class JointStatePublisher():
         # (The namespace is usually null.)
         namespace = rospy.get_namespace()
         #self.joints = rospy.get_param(namespace + '/joints', '')
-        self.joints = ['rotating_base', 'wheel1', 'wheel2', 'wheel3', 'wheel4', 'zipper', 'shoulder', 'elbow', 'wrist_x', 'wrist_y', 'gripper']
+        # self.joints = ['rotating_base', 'wheel1', 'wheel2', 'wheel3', 'wheel4', 'zipper', 'shoulder', 'elbow', 'wrist_x', 'wrist_y', 'gripper']
+        self.joints = ['rotating_base', 'wheel1', 'wheel2', 'wheel3', 'wheel4', 'zipper', 'shoulder', 'elbow', 'wrist_x', 'wrist_y']
         print('Joints!!! = ' + str(self.joints))
                                                                 
         self.servos = list()
