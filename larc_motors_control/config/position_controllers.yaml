@@ -17,10 +17,10 @@ wrist_y:
         module: joint_position_controller
         type: JointPositionController
     joint_name: wrist_y
-    joint_speed: 1.17
+    joint_speed: 0.314
     motor:
         id: 6
-        init: 512
+        init: 428
         min: 0
         max: 1023
 
@@ -30,28 +30,25 @@ wrist_x:
         module: joint_position_controller
         type: JointPositionController
     joint_name: wrist_x
-    joint_speed: 1.17
+    joint_speed: 0.314
     motor:
         id: 5
-        init: 512
+        init: 583
         min: 0
         max: 1023
 
 elbow:
     controller:
         package: dynamixel_controllers
-        module: joint_position_controller_dual_motor
-        type: JointPositionControllerDual
+        module: joint_position_controller
+        type: JointPositionController
     joint_name: elbow
-    joint_speed: 1.17
-    same_direction: true
-    motor_master:
-        id: 4
-        init: 512
-        min: 0
-        max: 1023
-    motor_slave:
+    joint_speed: 0.314
+    motor:
         id: 3
+        init: 2048
+        min: 0
+        max: 4095
 
 shoulder:
     controller:
@@ -69,19 +66,6 @@ shoulder:
     motor_slave:
         id: 0
 
-# shoulder:
-#     controller:
-#         package: dynamixel_controllers
-#         module: joint_position_controller
-#         type: JointPositionController
-#     joint_name: shoulder
-#     joint_speed: 0.314
-#     motor:
-#         id: 1
-#         init: 2048
-#         min: 0
-#         max: 4095
-
 zipper:
     controller:
         package: dynamixel_controllers
@@ -93,7 +77,7 @@ zipper:
         id: 15
         init: 0
         min: 0
-        max: 5400
+        max: 7200
         scale: 52.36
 
 rotating_base:

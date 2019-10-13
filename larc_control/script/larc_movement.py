@@ -10,13 +10,13 @@ import moveit_commander
 import moveit_msgs.msg
 import geometry_msgs.msg
 
-from std_msgs.msg import String
+from std_msgs.msg import String, Bool, Float32MultiArray
 from sensor_msgs.msg import JointState
 from moveit_msgs.msg import ExecuteTrajectoryActionGoal
 from moveit_msgs.msg import RobotState
 from std_msgs.msg import Float64, String
 
-node_name = 'poppy_control_moveit'
+node_name = 'larc_movement'
 group_id = 'all'
 
 rospy.loginfo(rospy.get_caller_id() + ' Node created')
@@ -118,3 +118,46 @@ def go_to_pos(jv):
 # execute_plan(plan)
 
 # pub_gripper.publish(0.2)   
+
+def rut1():
+	# Sobre los bloques
+	go_to_pos([-0.1, 0.055, -0.6, 1.0, -0.2, 1.47])
+	time.sleep(0.5)
+	# Rodear el bloque
+	go_to_pos([-0.1, 0.055, -0.9, 1.0, -0.5, 1.47])
+	time.sleep(0.5)
+	# Cerrar pinza
+	pub_gripper.publish(0.30)
+	time.sleep(0.5)
+	# Subir bloque
+	go_to_pos([-0.1, 0.055, -0.6, 1.0, -0.2, 1.47])
+	time.sleep(0.5)
+
+	
+
+	# Ir a barco azul
+	go_to_pos([2.4, 0.16, -0.6, 1.0, -0.2, 0.85])
+	time.sleep(0.5)
+	# Bajar en barzo azul
+	go_to_pos([2.4, 0.16, -1.9, -0.2, -0.20, 0.85])
+	time.sleep(1.5)
+	# Abrir pinza
+	pub_gripper.publish(0.65)
+	time.sleep(0.5)
+	# Subir en barco azul
+	go_to_pos([2.4, 0.16, -0.6, 1.0, -0.2, 0.85])
+	time.sleep(1.0)
+
+	# Sobre los bloques
+	go_to_pos([-0.1, 0.055, -0.6, 1.0, -0.2, 1.47])
+	time.sleep(0.5)
+
+def go_to_pos_callback(msg):
+    movement_flag_publisher.publish(True)
+    go_to_pos(msg.data)
+    movement_flag_publisher.publish(False)
+
+movement_flag_publisher = rospy.Publisher('/larc_movement/is_moving', Bool, queue_size=1)
+rospy.Subscriber("/larc_movement/go_to_pos", Float32MultiArray, go_to_pos_callback)
+
+rospy.spin()
