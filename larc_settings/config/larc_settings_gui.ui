@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>568</height>
+    <width>883</width>
+    <height>567</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -847,9 +847,9 @@ QGroupBox::title {
     <property name="geometry">
      <rect>
       <x>570</x>
-      <y>20</y>
-      <width>99</width>
-      <height>27</height>
+      <y>160</y>
+      <width>301</width>
+      <height>41</height>
      </rect>
     </property>
     <property name="text">
@@ -859,8 +859,8 @@ QGroupBox::title {
    <widget class="QPushButton" name="btn_save">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>50</y>
+      <x>770</x>
+      <y>210</y>
       <width>99</width>
       <height>27</height>
      </rect>
@@ -869,13 +869,135 @@ QGroupBox::title {
      <string>Save</string>
     </property>
    </widget>
+   <widget class="QGroupBox" name="groupBox_10">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>10</y>
+      <width>301</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox {
+    border: 1px solid gray;
+    border-radius: 9px;
+    margin-top: 0.5em;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 3px 0 3px;
+}</string>
+    </property>
+    <property name="title">
+     <string>Ref Point</string>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
+    <widget class="QSlider" name="sld_ref_s">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>90</y>
+       <width>211</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>-50</number>
+     </property>
+     <property name="maximum">
+      <number>50</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+    <widget class="QSlider" name="sld_ref_x">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>30</y>
+       <width>211</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>639</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lbl_ref_y">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>60</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Y=100</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lbl_ref_s">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>90</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>S=0.0</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="lbl_ref_x">
+     <property name="geometry">
+      <rect>
+       <x>240</x>
+       <y>30</y>
+       <width>51</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>X=100</string>
+     </property>
+    </widget>
+    <widget class="QSlider" name="sld_ref_y">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>60</y>
+       <width>211</width>
+       <height>29</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>479</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>883</width>
      <height>25</height>
     </rect>
    </property>

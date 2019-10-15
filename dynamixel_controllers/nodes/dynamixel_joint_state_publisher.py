@@ -72,7 +72,6 @@ class JointStatePublisher():
     def controller_state_handler(self, msg):
         js = JointStateMessage(msg.name, msg.current_pos, msg.velocity, msg.load)
         self.joint_states[msg.name] = js
-        # print('Received ' + msg.name)
        
     def publish_joint_states(self):
         # Construct message & publish joint states

@@ -1,0 +1,11 @@
+<launch>
+
+  <include file="$(find larc_motors_control)/launch/dynamixel_control.launch">
+  </include>
+
+  <include file="$(find larc_moveit)/launch/moveit_planning_execution.launch">
+  </include>
+
+  <node name="larc_movement" pkg="larc_control" type="larc_movement.py"/>
+
+</launch>

@@ -68,6 +68,10 @@ class LarcSettingsGui(QMainWindow):
         self.sld_min_hsv_black_s.valueChanged.connect(self.hsv_value_changed)
         self.sld_min_hsv_black_v.valueChanged.connect(self.hsv_value_changed)
 
+        self.sld_ref_x.valueChanged.connect(self.hsv_value_changed)
+        self.sld_ref_y.valueChanged.connect(self.hsv_value_changed)
+        self.sld_ref_s.valueChanged.connect(self.hsv_value_changed)
+
         self.btn_publish.clicked.connect(self.btn_publish_clicked)
         self.btn_save.clicked.connect(self.btn_save_clicked)
 
@@ -75,7 +79,6 @@ class LarcSettingsGui(QMainWindow):
         self.update_msg()
         self.update_gui()
         self.btn_publish_clicked()
-        
 
     def btn_publish_clicked(self):
         self.config_pub.publish(self.settings_msg)
@@ -96,6 +99,10 @@ class LarcSettingsGui(QMainWindow):
         self.config['max_hsv_black'] = self.settings_msg.max_hsv_black
         self.config['min_hsv_black'] = self.settings_msg.min_hsv_black
 
+        self.config['ref_x'] = self.settings_msg.ref_x
+        self.config['ref_y'] = self.settings_msg.ref_y
+        self.config['ref_s'] = self.settings_msg.ref_s
+
     def init_msg(self):
         self.settings_msg.max_hsv_blue = self.config['max_hsv_blue']
         self.settings_msg.min_hsv_blue = self.config['min_hsv_blue']
@@ -105,6 +112,10 @@ class LarcSettingsGui(QMainWindow):
         self.settings_msg.min_hsv_red = self.config['min_hsv_red']
         self.settings_msg.max_hsv_black = self.config['max_hsv_black']
         self.settings_msg.min_hsv_black = self.config['min_hsv_black']
+
+        self.settings_msg.ref_x = self.config['ref_x']
+        self.settings_msg.ref_y = self.config['ref_y']
+        self.settings_msg.ref_s = self.config['ref_s']
     
     def update_gui(self):
         self.lbl_max_hsv_blue_h.setText( 'H: {}'.format(self.sld_max_hsv_blue_h.value()) )
@@ -135,6 +146,10 @@ class LarcSettingsGui(QMainWindow):
         self.lbl_min_hsv_black_s.setText( 'S: {}'.format(self.sld_min_hsv_black_s.value()) )
         self.lbl_min_hsv_black_v.setText( 'V: {}'.format(self.sld_min_hsv_black_v.value()) )
 
+        self.lbl_ref_x.setText( 'V: {}'.format(self.sld_ref_x.value()) )
+        self.lbl_ref_y.setText( 'V: {}'.format(self.sld_ref_y.value()) )
+        self.lbl_ref_s.setText( 'V: {}'.format(self.sld_ref_s.value()/100.0) )
+
     def update_msg(self):
         self.settings_msg.max_hsv_blue[0] = self.sld_max_hsv_blue_h.value()
         self.settings_msg.max_hsv_blue[1] = self.sld_max_hsv_blue_s.value()
@@ -163,6 +178,10 @@ class LarcSettingsGui(QMainWindow):
         self.settings_msg.min_hsv_black[0] = self.sld_min_hsv_black_h.value()
         self.settings_msg.min_hsv_black[1] = self.sld_min_hsv_black_s.value()
         self.settings_msg.min_hsv_black[2] = self.sld_min_hsv_black_v.value()
+        
+        self.settings_msg.ref_x = self.sld_ref_x.value()
+        self.settings_msg.ref_y = self.sld_ref_y.value()
+        self.settings_msg.ref_s = self.sld_ref_s.value() / 100.0
 
     def init_gui(self):
         self.sld_max_hsv_blue_h.setValue( self.settings_msg.max_hsv_blue[0] )
@@ -192,6 +211,10 @@ class LarcSettingsGui(QMainWindow):
         self.sld_min_hsv_black_h.setValue( self.settings_msg.min_hsv_black[0] )
         self.sld_min_hsv_black_s.setValue( self.settings_msg.min_hsv_black[1] )
         self.sld_min_hsv_black_v.setValue( self.settings_msg.min_hsv_black[2] )
+
+        self.sld_ref_x.setValue( self.settings_msg.ref_x )
+        self.sld_ref_y.setValue( self.settings_msg.ref_y )
+        self.sld_ref_s.setValue( int(self.settings_msg.ref_s*100) )
 
 
 app = QApplication(sys.argv)

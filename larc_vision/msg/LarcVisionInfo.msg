@@ -10,9 +10,12 @@ uint32[]    cont_x
 uint32[]    cont_y
 
 float64     cont_slope
-
 uint32      corner_x
 uint32      corner_y
 
-int32      error_x
-int32      error_y
+float64     error_s
+int32       error_x
+int32       error_y
+
+string      left_color
+string      right_color

@@ -25,11 +25,13 @@ Y_STEP = 10
 
 X_REF = 291
 Y_REF = 244
+S_REF = 0.0
 
 SETTINGS_RECEIVED = False
 
 def larc_settings_callback(msg):
     global SETTINGS_RECEIVED, min_hsv_blue, max_hsv_blue, min_hsv_green, max_hsv_green, min_hsv_red, max_hsv_red, min_hsv_black, max_hsv_black
+    global X_REF, Y_REF, S_REF
     if not SETTINGS_RECEIVED:
         print('Config received.')
     min_hsv_blue[0] = int(msg.min_hsv_blue[0]/2)
@@ -57,6 +59,10 @@ def larc_settings_callback(msg):
     max_hsv_black[0] = int(msg.max_hsv_black[0]/2)
     max_hsv_black[1] = int( 255.0*(msg.max_hsv_black[1]/100.0) )
     max_hsv_black[2] = int( 255.0*(msg.max_hsv_black[2]/100.0) )
+
+    X_REF = msg.ref_x
+    Y_REF = msg.ref_y
+    S_REF = msg.ref_s
 
     SETTINGS_RECEIVED = True
 
@@ -108,6 +114,16 @@ while not rospy.is_shutdown():
         frame_bgr[400:, :] = [255, 255, 255]
         frame_hsv = cv2.cvtColor(frame_bgr, cv2.COLOR_BGR2HSV)
 
+        ## RED
+        mask_red_1 = cv2.inRange(frame_hsv, np.array([0             , min_hsv_red[1], min_hsv_red[2]]),
+                                            np.array([min_hsv_red[0], max_hsv_red[1], max_hsv_red[2]]) )
+        mask_red_2 = cv2.inRange(frame_hsv, np.array([max_hsv_red[0], min_hsv_red[1], min_hsv_red[2]]),
+                                            np.array([255           , max_hsv_red[1], max_hsv_red[2]]) )
+        mask_red = cv2.bitwise_or(mask_red_1, mask_red_2)
+        mask_red = cv2.dilate(mask_red, kernel_cont, iterations = 1)
+        mask_red = cv2.morphologyEx(mask_red, cv2.MORPH_OPEN, kernel_strip)
+        mask_red_bgr = cv2.cvtColor(mask_red, cv2.COLOR_GRAY2BGR)
+
         ## BLUE
         mask_blue = cv2.inRange(frame_hsv, min_hsv_blue, max_hsv_blue)
         mask_blue = cv2.dilate(mask_blue, kernel_cont, iterations = 1)
@@ -123,16 +139,18 @@ while not rospy.is_shutdown():
         ## BLUE and GREEN
         mask_cont = cv2.bitwise_or(mask_blue, mask_green)
         mask_cont_bgr = cv2.cvtColor(mask_cont, cv2.COLOR_GRAY2BGR)
+        mask_cont_bgr_2 = np.copy(mask_cont_bgr)
         _, conts_bg, hierarchy = cv2.findContours(mask_cont, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
         cv2.line(mask_cont_bgr, (0, Y_REF), ((mask_cont_bgr.shape[1]-1, Y_REF)), (0, 255, 255), 2)
         cv2.line(mask_cont_bgr, (X_REF, 0), (X_REF, (mask_cont_bgr.shape[0]-1)), (0, 255, 255), 2)
+        cv2.line(mask_cont_bgr, (int(X_REF-S_REF*Y_REF), 0), (X_REF, Y_REF), (0, 0, 255), 3)
 
         big_conts = [None, None]
         areas = [-1, -1]
         for contour in conts_bg:
             area = cv2.moments(contour)['m00']
-            if area > 15000:
+            if area > 12000:
                 if area > areas[0]:
                     big_conts[1] = np.copy(big_conts[0])
                     areas[1] = areas[0]
@@ -184,10 +202,47 @@ while not rospy.is_shutdown():
             slope, intercept, r_value, p_value, std_err = stats.linregress(points[:,1],points[:,0])
             # print(slope)
 
-        # canny_green = cv2.Canny(mask_green, 50, 200, None, 3)
-        # lines_green = cv2.HoughLines(canny_green, 5, 3*np.pi / 180, 200, None, 0, 0)
-        # mask_green_show = np.copy(mask_green_bgr)
-        # draw_lines(lines_green, mask_green_show)
+        ## Check contain.. color
+        
+        if len(big_conts)==2:
+
+            if centers_x[0]>centers_x[1]:
+                idx_left = 1
+                idx_right = 0 
+            else:
+                idx_left = 0
+                idx_right = 1
+
+            # left 
+            mask_left = np.zeros_like(mask_blue)
+            cv2.drawContours(mask_cnt1, [big_conts[idx_left]], -1, (255), -1)
+            pix_blue = np.sum(np.sum(cv2.bitwise_and(mask_cnt1, mask_blue)))
+            pix_green = np.sum(np.sum(cv2.bitwise_and(mask_cnt1, mask_green)))
+            pix_red = np.sum(np.sum(cv2.bitwise_and(mask_cnt1, mask_red)))
+            if pix_blue>pix_green and pix_blue>pix_red:
+                left_color = 'blue'
+            elif pix_green>pix_blue and pix_green>pix_red:
+                left_color = 'green'
+            else:
+                left_color = 'red'
+            
+            # right 
+            mask_right = np.zeros_like(mask_blue)
+            cv2.drawContours(mask_cnt1, [big_conts[idx_right]], -1, (255), -1)
+            pix_blue = np.sum(np.sum(cv2.bitwise_and(mask_cnt1, mask_blue)))
+            pix_green = np.sum(np.sum(cv2.bitwise_and(mask_cnt1, mask_green)))
+            pix_red = np.sum(np.sum(cv2.bitwise_and(mask_cnt1, mask_red)))
+            if pix_blue>pix_green and pix_blue>pix_red:
+                right_color = 'blue'
+            elif pix_green>pix_blue and pix_green>pix_red:
+                right_color = 'green'
+            else:
+                right_color = 'red'
+        else:
+            left_color = ''
+            right_color = ''
+
+
 
         ## BLACK
         mask_black = cv2.inRange(frame_hsv, min_hsv_black, max_hsv_black)
@@ -212,8 +267,8 @@ while not rospy.is_shutdown():
             black_strip_y = int(M["m01"] / M["m00"])
             cv2.circle(mask_black_show, (black_strip_x, black_strip_y), 10, (0, 255, 0), -1)
 
-        vis1 = np.concatenate((frame_bgr, mask_cont_bgr), axis=1) # vertically
-        vis2 = np.concatenate((mask_cont_bgr, mask_black_show), axis=1) # vertically
+        vis1 = np.concatenate((frame_bgr, mask_cont_bgr_2), axis=1) # vertically
+        vis2 = np.concatenate((mask_cont_bgr, mask_red_bgr), axis=1) # vertically
         vis = np.concatenate((vis1, vis2), axis=0) # horizontally
 
         cv2.imshow('vis',vis)
@@ -222,7 +277,8 @@ while not rospy.is_shutdown():
         # cv2.imshow('mask_black',mask_black)
         pub.publish(    frame_counter, black_strip_flag, black_strip_x, black_strip_y,
                         len(big_conts), centers_x, centers_y, slope, corner[0], corner[1],
-                        int(X_REF-corner[0]), int(Y_REF-corner[1]) )
+                        S_REF-slope, int(X_REF-corner[0]), int(Y_REF-corner[1]),
+                        left_color, right_color )
         frame_counter+=1
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break

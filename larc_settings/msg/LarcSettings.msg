@@ -8,3 +8,6 @@ uint32[]     min_hsv_red
 uint32[]     max_hsv_black
 uint32[]     min_hsv_black
 
+uint32       ref_x
+uint32       ref_y
+float64      ref_s
