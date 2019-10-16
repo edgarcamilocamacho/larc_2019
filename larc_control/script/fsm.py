@@ -9,6 +9,8 @@ import time
 from geometry_msgs.msg import Vector3
 from std_msgs.msg import Float32MultiArray, Float64, String
 
+from var import *
+
 BTN1_PIN = 432
 
 SRC_TIME = 30
@@ -20,7 +22,7 @@ class Fsm:
         self.state_1 = None
 
         ## PID
-        self.pid_w = PID(4.0, 0.0, 0.0)
+        self.pid_w = PID(1.0, 0.0, 0.0)
         self.pid_w.SetPoint = 0.0
         self.pid_w.setWindup(20.0)
         self.meas_w_1 = 0
@@ -49,6 +51,11 @@ class Fsm:
         self.ret_state = []
 
         self.pick_phases = []
+        self.release_phases = []
+
+        self.left_color = ''
+        self.right_color = ''
+        self.ctp = ''
 
         ## Others
         self.mb = MotorsBridge()
@@ -58,7 +65,7 @@ class Fsm:
 
     def tick(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
-            print('Entering to state "{}"'.format(self.state.__name__))
+            rospy.loginfo('Entering to state "{}"'.format(self.state.__name__))
         # print('Entering to state "{}"'.format(self.state.__name__))
         next_state = self.state(vision_info, joint_state, is_moving)
         self.state_1 = self.state
@@ -66,7 +73,7 @@ class Fsm:
     
     def s_start_state(self, vision_info, joint_state, is_moving):
         self.timer1 = 0
-        return self.s_wait_button
+        return self.init_position
 
     def s_wait_button(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
@@ -79,7 +86,7 @@ class Fsm:
         
     def init_position(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1: # Recien llego a este estado?
-            self.msg.data = [0.0, 0.0, 0.1, 1.2, 0.4, 1.57] 
+            self.msg.data = [-0.2, 0.001, -0.3, 1.41, 0.0, 1.57]
             self.pub_move.publish(self.msg)
             self.timer1 = 0
         self.timer1 += 1
@@ -154,7 +161,7 @@ class Fsm:
             return self.s_wait1
         else:
             self.pub_cmd_vel.publish(0.0, 0.0, 0.0)
-            return self.s_control1
+            return self.s_control2
 
     def s_control1(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1: # Recien llego a este estado?
@@ -189,6 +196,7 @@ class Fsm:
             meas_w = -0.3
         self.pid_w.update(meas_w)
         cw = -self.pid_w.output
+        # cw = 0.0
         self.meas_w_1 = meas_w
         ###
         meas_x = vision_info.error_x/640.0
@@ -227,88 +235,131 @@ class Fsm:
             return self.s_control2
         else:
             self.pub_cmd_vel.publish(0.0, 0.0, 0.0)
-            return self.dummy_1
+            return self.choose_1
         
+    ## CHOOSE
+    def choose_1(self, vision_info, joint_state, is_moving):
+        if len(pick_order)>0:
+            self.ctp = pick_order.pop(0)
+            rospy.loginfo('Picking: "{}"'.format(self.ctp))
+            self.pick_phases = [    pick_routines[self.ctp][0],
+                                    pick_routines[self.ctp][1],
+                                    pick_routines[self.ctp][0] ]
+            return self.s_pick_0
+        else:
+            return self.s_end_state
+    
+    def choose_2(self, vision_info, joint_state, is_moving):
+        if self.ctp[0]=='0' or self.ctp[0]=='2' or self.ctp[0]=='4':
+            rospy.loginfo('Picking the left one, color: {}'.format(self.left_color))
+            if self.left_color=='green':
+                routine = release_green_routines.pop(0)
+            elif self.left_color=='blue':
+                routine = release_blue_routines.pop(0)
+            else:
+                routine = release_red_routines.pop(0)
+
+        elif self.ctp[0]=='1' or self.ctp[0]=='3' or self.ctp[0]=='5':
+            rospy.loginfo('Picking the right one, color: {}'.format(self.right_color))
+            if self.right_color=='green':
+                routine = release_green_routines.pop(0)
+            elif self.right_color=='blue':
+                routine = release_blue_routines.pop(0)
+            else:
+                routine = release_red_routines.pop(0)
+        self.release_phases = [routine[0], routine[1], routine[2], routine[0]]
+        return self.s_release_0
 
     ## DUMMY
     def dummy_1(self, vision_info, joint_state, is_moving):
-        if self.state != self.state_1:
-            self.pub_gripper.publish(0.65)
         self.pick_phases = [    [-0.15, 0.055, -0.5, 1.5, -0.5, 1.43],
                                 [-0.12, 0.055, -1.0, 1.0, -0.5, 1.43],
                                 [-0.15, 0.055, -0.5, 1.5, -0.5, 1.43] ]
         self.ret_state.append(self.dummy_2)
         return self.s_pick_0
 
-    def dummy_2(self, vision_info, joint_state, is_moving):
+    # pick
+    def s_pick_0(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
-            pass
-        self.pick_phases = [    [2.1, 0.08, -0.5, 1.5, -0.5, 0.55],
-                                [2.2, 0.08, -1.495, 0.9, -0.895, 0.65],
-                                [2.16, 0.08, -1.495, 0.9, -0.895, 0.67],
-                                [2.1, 0.08, -0.5, 1.5, -0.5, 0.55] ]
-        self.ret_state.append(self.dummy_3)
-        return self.s_release_0
-
-    def dummy_3(self, vision_info, joint_state, is_moving):
+            self.msg.data = self.pick_phases[0]
+            self.pub_move.publish(self.msg)
+            self.timer1 = 0
+        self.timer1 += 1
+        if self.timer1<SRC_TIME or is_moving:
+            return self.s_pick_0
+        else:
+            if vision_info.left_color!='' and vision_info.right_color!='':
+                self.left_color = vision_info.left_color
+                self.right_color = vision_info.right_color
+            rospy.loginfo('Left color: "{}"'.format(self.left_color))
+            rospy.loginfo('Right color: "{}"'.format(self.right_color))
+            return self.s_pick_1
+    def s_pick_1(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
-            pass
-        self.pick_phases = [    [-0.23, 0.04, -0.5, 1.5, -0.5, -1.80],
-                                [-0.21, 0.04, -1.0, 1.0, -0.5, -1.80],
-                                [-0.23, 0.04, -0.5, 1.5, -0.5, -1.80] ]
-        self.ret_state.append(self.dummy_4)
-        return self.s_pick_0
-
-    def dummy_4(self, vision_info, joint_state, is_moving):
+            self.msg.data = self.pick_phases[1]
+            self.pub_move.publish(self.msg)
+            self.timer1 = 0
+        self.timer1 += 1
+        if self.timer1<SRC_TIME or is_moving:
+            return self.s_pick_1
+        else:    
+            self.ret_state.append(self.s_pick_2)
+            return self.s_close_gripper
+    def s_pick_2(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
-            pass
-        self.pick_phases = [    [2.1, 0.08, -0.5, 1.5, -0.5, 0.55],
-                                [2.20, 0.088, -1.22, 1.15, -0.82, 0.64],
-                                [2.16, 0.088, -1.22, 1.15, -0.82, 0.64],
-                                [2.1, 0.08, -0.5, 1.5, -0.5, 0.55] ]
-        self.ret_state.append(self.dummy_5)
-        return self.s_release_0
-
-    def dummy_5(self, vision_info, joint_state, is_moving):
+            self.msg.data = self.pick_phases[2]
+            self.pub_move.publish(self.msg)
+            self.timer1 = 0
+        self.timer1 += 1
+        if self.timer1<SRC_TIME or is_moving:
+            return self.s_pick_2
+        else:    
+            return self.choose_2
+    
+    # release
+    def s_release_0(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
-            pass
-        self.pick_phases = [    [-0.15, 0.055, -0.5, 1.5, -0.5, 1.43],
-                                [-0.14, 0.042, -1.25, 0.81, -0.55, 1.43],
-                                [-0.15, 0.055, -0.5, 1.5, -0.5, 1.43] ]
-        self.ret_state.append(self.dummy_6)
-        return self.s_pick_0
-
-    def dummy_6(self, vision_info, joint_state, is_moving):
+            self.msg.data = self.release_phases[0]
+            self.pub_move.publish(self.msg)
+            self.timer1 = 0
+        self.timer1 += 1
+        if self.timer1<SRC_TIME or is_moving:
+            return self.s_release_0
+        else:    
+            return self.s_release_1
+    def s_release_1(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
-            pass
-        self.pick_phases = [    [2.1, 0.08, -0.5, 1.5, -0.5, 0.55],
-                                [2.19, 0.08, -1.11, 1.05, -0.53, 0.64],
-                                [2.15, 0.08, -1.11, 1.05, -0.53, 0.64],
-                                [2.1, 0.08, -0.5, 1.5, -0.5, 0.55] ]
-        self.ret_state.append(self.dummy_7)
-        return self.s_release_0
-
-    def dummy_7(self, vision_info, joint_state, is_moving):
+            self.msg.data = self.release_phases[1]
+            self.pub_move.publish(self.msg)
+            self.timer1 = 0
+        self.timer1 += 1
+        if self.timer1<SRC_TIME or is_moving:
+            return self.s_release_1
+        else:    
+            self.ret_state.append(self.s_release_2)
+            return self.s_open_gripper
+    def s_release_2(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
-            pass
-        self.pick_phases = [    [-0.23, 0.04, -0.5, 1.5, -0.5, -1.80],
-                                [-0.21, 0.04, -1.25, 0.81, -0.55, -1.80],
-                                [-0.23, 0.04, -0.5, 1.5, -0.5, -1.80] ]
-        self.ret_state.append(self.dummy_8)
-        return self.s_pick_0
-
-    def dummy_8(self, vision_info, joint_state, is_moving):
+            self.msg.data = self.release_phases[2]
+            self.pub_move.publish(self.msg)
+            self.timer1 = 0
+        self.timer1 += 1
+        if self.timer1<5 or is_moving:
+            return self.s_release_2
+        else:    
+            return self.s_release_3
+    def s_release_3(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
-            pass
-        self.pick_phases = [    [2.1, 0.08, -0.5, 1.5, -0.5, 0.55],
-                                [2.19, 0.08, -0.92, 1.22, -0.58, 0.64],
-                                [2.13, 0.08, -0.92, 1.22, -0.58, 0.64],
-                                [2.1, 0.08, -0.5, 1.5, -0.5, 0.55] ]
-        self.ret_state.append(self.s_end_state)
-        return self.s_release_0
+            self.msg.data = self.release_phases[3]
+            self.pub_move.publish(self.msg)
+            self.timer1 = 0
+        self.timer1 += 1
+        if self.timer1<SRC_TIME or is_moving:
+            return self.s_release_3
+        else:    
+            return self.choose_1
 
     ## CONTENEDORES
-
     def s_close_gripper(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
             self.pub_gripper.publish(0.27)
@@ -356,82 +407,6 @@ class Fsm:
         self.timer1 += 1
         if self.timer1<4:
             return self.s_open_gripper_3
-        else:    
-            return self.ret_state.pop()
-
-    # pick
-    def s_pick_0(self, vision_info, joint_state, is_moving):
-        if self.state != self.state_1:
-            self.msg.data = self.pick_phases[0]
-            self.pub_move.publish(self.msg)
-            self.timer1 = 0
-        self.timer1 += 1
-        if self.timer1<SRC_TIME or is_moving:
-            return self.s_pick_0
-        else:    
-            return self.s_pick_1
-    def s_pick_1(self, vision_info, joint_state, is_moving):
-        if self.state != self.state_1:
-            self.msg.data = self.pick_phases[1]
-            self.pub_move.publish(self.msg)
-            self.timer1 = 0
-        self.timer1 += 1
-        if self.timer1<SRC_TIME or is_moving:
-            return self.s_pick_1
-        else:    
-            self.ret_state.append(self.s_pick_2)
-            return self.s_close_gripper
-    def s_pick_2(self, vision_info, joint_state, is_moving):
-        if self.state != self.state_1:
-            self.msg.data = self.pick_phases[2]
-            self.pub_move.publish(self.msg)
-            self.timer1 = 0
-        self.timer1 += 1
-        if self.timer1<SRC_TIME or is_moving:
-            return self.s_pick_2
-        else:    
-            return self.ret_state.pop()
-    
-    # release
-    def s_release_0(self, vision_info, joint_state, is_moving):
-        if self.state != self.state_1:
-            self.msg.data = self.pick_phases[0]
-            self.pub_move.publish(self.msg)
-            self.timer1 = 0
-        self.timer1 += 1
-        if self.timer1<SRC_TIME or is_moving:
-            return self.s_release_0
-        else:    
-            return self.s_release_1
-    def s_release_1(self, vision_info, joint_state, is_moving):
-        if self.state != self.state_1:
-            self.msg.data = self.pick_phases[1]
-            self.pub_move.publish(self.msg)
-            self.timer1 = 0
-        self.timer1 += 1
-        if self.timer1<SRC_TIME or is_moving:
-            return self.s_release_1
-        else:    
-            self.ret_state.append(self.s_release_2)
-            return self.s_open_gripper
-    def s_release_2(self, vision_info, joint_state, is_moving):
-        if self.state != self.state_1:
-            self.msg.data = self.pick_phases[2]
-            self.pub_move.publish(self.msg)
-            self.timer1 = 0
-        self.timer1 += 1
-        if self.timer1<5 or is_moving:
-            return self.s_release_2
-        else:    
-            return self.s_release_3
-    def s_release_3(self, vision_info, joint_state, is_moving):
-        if self.state != self.state_1:
-            self.msg.data = self.pick_phases[3]
-            self.pub_move.publish(self.msg)
-            self.timer1 = 0
-        self.timer1 += 1
-        if self.timer1<SRC_TIME or is_moving:
-            return self.s_release_3
         else:    
             return self.ret_state.pop()
     
