@@ -94,11 +94,24 @@ def execute_plan(plan, wait=True):
     group.execute(plan, wait=wait)
 
 def go_to_pos(jv):
+
+    plan = plan_to_joint_values( jv )
+    if plan==None:
+        rospy.logwarn(rospy.get_caller_id() + ' No plan. plan=None')
+        return
     error = 10.0
-    while error>0.05:
-        execute_plan( plan_to_joint_values( jv ) )
+    while error>0.07:
+        if error!=10.0:
+            rospy.logwarn(rospy.get_caller_id() + ' Plan not executed, retrying...')
+        execute_plan( plan )
         error = np.sqrt(np.sum((get_current_joint_values()-np.array(jv))**2))
-        print('error='+str(error))
+    rospy.logwarn(rospy.get_caller_id() + ' Plan executed')
+
+    # error = 10.0
+    # while error>0.07:
+    #     execute_plan( plan_to_joint_values( jv ) )
+    #     error = np.sqrt(np.sum((get_current_joint_values()-np.array(jv))**2))
+    #     print('error='+str(error))
 
 def go_to_pos_callback(msg):
     movement_flag_publisher.publish(True)

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROBOT_IP="192.168.20.82"
+ROBOT_IP="192.168.50.1"
 ROBOT_USER="up"
 ROBOT_PASS="up"
 WORKSPACE="/home/${ROBOT_USER}/ros/larc_ws"

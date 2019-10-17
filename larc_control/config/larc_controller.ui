@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1091</width>
-    <height>820</height>
+    <width>1230</width>
+    <height>766</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>1071</width>
-      <height>761</height>
+      <width>1061</width>
+      <height>701</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -43,122 +43,10 @@ QGroupBox::title {
      <attribute name="title">
       <string>Movement</string>
      </attribute>
-     <widget class="QPushButton" name="pushButton">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>150</y>
-        <width>81</width>
-        <height>27</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Control</string>
-      </property>
-     </widget>
-     <widget class="QGroupBox" name="btn_control">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>10</y>
-        <width>131</width>
-        <height>201</height>
-       </rect>
-      </property>
-      <property name="title">
-       <string>Speeds</string>
-      </property>
-      <widget class="QLabel" name="label_7">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>68</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Linear</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="label_9">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>80</y>
-         <width>68</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Angular</string>
-       </property>
-      </widget>
-      <widget class="QDoubleSpinBox" name="spin_linear_speed">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>50</y>
-         <width>81</width>
-         <height>27</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <double>0.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>10.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-       <property name="value">
-        <double>5.000000000000000</double>
-       </property>
-      </widget>
-      <widget class="QDoubleSpinBox" name="spin_angular_speed">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>100</y>
-         <width>81</width>
-         <height>27</height>
-        </rect>
-       </property>
-       <property name="minimum">
-        <double>0.000000000000000</double>
-       </property>
-       <property name="maximum">
-        <double>10.000000000000000</double>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-       <property name="value">
-        <double>3.000000000000000</double>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="check_pub_cmd_vel">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>170</y>
-         <width>111</width>
-         <height>22</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Pub CmdVel</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </widget>
      <widget class="QGroupBox" name="groupBox_3">
       <property name="geometry">
        <rect>
-        <x>420</x>
+        <x>280</x>
         <y>110</y>
         <width>501</width>
         <height>441</height>
@@ -494,7 +382,7 @@ QGroupBox::title {
      <widget class="QGroupBox" name="groupBox_2">
       <property name="geometry">
        <rect>
-        <x>420</x>
+        <x>280</x>
         <y>10</y>
         <width>501</width>
         <height>91</height>
@@ -539,7 +427,7 @@ QGroupBox::title {
      <widget class="QGroupBox" name="groupBox">
       <property name="geometry">
        <rect>
-        <x>150</x>
+        <x>10</x>
         <y>10</y>
         <width>261</width>
         <height>541</height>
@@ -1001,47 +889,21 @@ QGroupBox::title {
       <property name="title">
        <string>Image 1</string>
       </property>
-      <widget class="QComboBox" name="cmb_img1">
+      <widget class="QComboBox" name="cmb_img_1">
        <property name="geometry">
         <rect>
          <x>60</x>
          <y>30</y>
-         <width>131</width>
+         <width>271</width>
          <height>27</height>
         </rect>
        </property>
       </widget>
-      <widget class="QLabel" name="label_10">
+      <widget class="QLabel" name="lbl_image_1">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>30</y>
-         <width>51</width>
-         <height>21</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Topic:</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="check_image1">
-       <property name="geometry">
-        <rect>
-         <x>200</x>
-         <y>30</y>
-         <width>99</width>
-         <height>31</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Enable</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="lbl_image1">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>70</y>
+         <y>60</y>
          <width>320</width>
          <height>240</height>
         </rect>
@@ -1050,7 +912,512 @@ QGroupBox::title {
         <string>Image1</string>
        </property>
       </widget>
+      <widget class="QCheckBox" name="check_image_1">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>30</y>
+         <width>51</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>EN</string>
+       </property>
+      </widget>
      </widget>
+     <widget class="QGroupBox" name="groupBox_5">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>10</y>
+        <width>341</width>
+        <height>321</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Image 2</string>
+      </property>
+      <widget class="QComboBox" name="cmb_img_2">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>30</y>
+         <width>271</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lbl_image_2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>60</y>
+         <width>320</width>
+         <height>240</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Image1</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="check_image_2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>30</y>
+         <width>51</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>EN</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_6">
+      <property name="geometry">
+       <rect>
+        <x>710</x>
+        <y>10</y>
+        <width>341</width>
+        <height>321</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Image 3</string>
+      </property>
+      <widget class="QComboBox" name="cmb_img_3">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>30</y>
+         <width>271</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lbl_image_3">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>60</y>
+         <width>320</width>
+         <height>240</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Image1</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="check_image_3">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>30</y>
+         <width>51</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>EN</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_7">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>340</y>
+        <width>341</width>
+        <height>321</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Image 4</string>
+      </property>
+      <widget class="QComboBox" name="cmb_img_4">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>30</y>
+         <width>271</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lbl_image_4">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>60</y>
+         <width>320</width>
+         <height>240</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Image1</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="check_image_4">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>30</y>
+         <width>51</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>EN</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="groupBox_8">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>340</y>
+        <width>341</width>
+        <height>321</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Image 5</string>
+      </property>
+      <widget class="QComboBox" name="cmb_img_5">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>30</y>
+         <width>271</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lbl_image_5">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>60</y>
+         <width>320</width>
+         <height>240</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Image1</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="check_image_5">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>30</y>
+         <width>51</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>EN</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tab">
+     <attribute name="title">
+      <string>Vision 2</string>
+     </attribute>
+     <widget class="QGroupBox" name="groupBox_9">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>661</width>
+        <height>551</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Image 6</string>
+      </property>
+      <widget class="QComboBox" name="cmb_img_6">
+       <property name="geometry">
+        <rect>
+         <x>60</x>
+         <y>30</y>
+         <width>271</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lbl_image_6">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>60</y>
+         <width>640</width>
+         <height>480</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Image1</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="check_image_6">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>30</y>
+         <width>51</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>EN</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="btn_control_2">
+    <property name="geometry">
+     <rect>
+      <x>1080</x>
+      <y>10</y>
+      <width>131</width>
+      <height>241</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox {
+    border: 1px solid gray;
+    border-radius: 9px;
+    margin-top: 0.5em;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 3px 0 3px;
+}</string>
+    </property>
+    <property name="title">
+     <string>FSM</string>
+    </property>
+    <widget class="QPushButton" name="btn_fsm_init_pos">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>50</y>
+       <width>111</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Init pos</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_fsm_cam_pos">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>80</y>
+       <width>111</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Cam pos</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_fsm_control">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>110</y>
+       <width>111</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Control</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_fsm_init_control">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>140</y>
+       <width>111</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Init and Cont</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_fsm_start_nc">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>170</y>
+       <width>111</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Start No Cont</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_fsm_idle">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>111</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Idle</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_fsm_start">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>200</y>
+       <width>111</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Start</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="btn_control">
+    <property name="geometry">
+     <rect>
+      <x>1080</x>
+      <y>260</y>
+      <width>131</width>
+      <height>201</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QGroupBox {
+    border: 1px solid gray;
+    border-radius: 9px;
+    margin-top: 0.5em;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 3px 0 3px;
+}</string>
+    </property>
+    <property name="title">
+     <string>Speeds</string>
+    </property>
+    <widget class="QLabel" name="label_7">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>68</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Linear</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_9">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>80</y>
+       <width>68</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Angular</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="spin_linear_speed">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>50</y>
+       <width>81</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <double>0.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>10.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.500000000000000</double>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="spin_angular_speed">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>100</y>
+       <width>81</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <double>0.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>10.000000000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.100000000000000</double>
+     </property>
+     <property name="value">
+      <double>0.500000000000000</double>
+     </property>
+    </widget>
+    <widget class="QCheckBox" name="check_pub_cmd_vel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>170</y>
+       <width>111</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Pub CmdVel</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>140</y>
+       <width>81</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Control</string>
+     </property>
     </widget>
    </widget>
   </widget>
@@ -1059,7 +1426,7 @@ QGroupBox::title {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1091</width>
+     <width>1230</width>
      <height>25</height>
     </rect>
    </property>

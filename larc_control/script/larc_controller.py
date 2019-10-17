@@ -4,14 +4,17 @@ import sys
 import numpy as np
 import yaml
 import time
+import cv2
 
 import rospy
 import tf
 import rospkg
-from std_msgs.msg import Float64, String, Float32MultiArray
+from std_msgs.msg import Float64, String, Float32MultiArray, Int8
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import Vector3
 from dynamixel_controllers.srv import TorqueEnable
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge, CvBridgeError
 
 from PyQt5.QtWidgets import QApplication, QDialog, QMainWindow, QFileDialog, QWidget
 from PyQt5.QtWidgets import QMessageBox, QTableWidget, QTableWidgetItem, QPushButton
@@ -20,6 +23,16 @@ from PyQt5.uic import loadUi
 from PyQt5 import QtCore
 from PyQt5.QtCore import QTimer, QRegExp
 from PyQt5.QtGui import QPixmap, QImage, QRegExpValidator
+
+VISION_TOPICS = [   '/larc/image/frame_bgr',
+                    '/larc/image/mask_red',
+                    '/larc/image/mask_blue',
+                    '/larc/image/mask_green',
+                    '/larc/image/mask_cont',
+                    '/larc/image/mask_cont_info',
+                    '/larc/image/mask_black',
+                    '/larc/image/mask_black_info',
+                ]
 
 class LarcGuiController(QMainWindow):
     def __init__(self):
@@ -40,6 +53,9 @@ class LarcGuiController(QMainWindow):
 
         ### ROS ###
         rospy.init_node('larc_controller')
+
+        self.pub_fsm_start = rospy.Publisher("/larc/fsm_start", Int8, queue_size = 1)
+
         self.pub_cmd_vel = rospy.Publisher("/cmd_vel", Vector3, queue_size = 1)
         self.pub_base = rospy.Publisher("/rotating_base/command", Float64, queue_size = 1)
         self.pub_zipper = rospy.Publisher("/zipper/command", Float64, queue_size = 1)
@@ -102,6 +118,13 @@ class LarcGuiController(QMainWindow):
         self.btn_open.clicked.connect(self.btn_open_clicked)
         self.btn_close.clicked.connect(self.btn_close_clicked)
         self.btn_clear.clicked.connect(self.btn_clear_clicked)
+        self.btn_fsm_idle.clicked.connect(self.btn_fsm_clicked)
+        self.btn_fsm_init_pos.clicked.connect(self.btn_fsm_clicked)
+        self.btn_fsm_cam_pos.clicked.connect(self.btn_fsm_clicked)
+        self.btn_fsm_control.clicked.connect(self.btn_fsm_clicked)
+        self.btn_fsm_init_control.clicked.connect(self.btn_fsm_clicked)
+        self.btn_fsm_start.clicked.connect(self.btn_fsm_clicked)
+        self.btn_fsm_start_nc.clicked.connect(self.btn_fsm_clicked)
         ## Checks
         self.check_tor_base.stateChanged.connect(self.check_tor_base_stateChanged)
         self.check_tor_zipper.stateChanged.connect(self.check_tor_zipper_stateChanged)
@@ -114,6 +137,21 @@ class LarcGuiController(QMainWindow):
         ## Sliders
         self.slider_dx.valueChanged.connect(self.slider_dx_valueChanged)
 
+        ## Vision
+        self.cv_bridge = CvBridge()
+        self.cmb_imgs = [   self.cmb_img_1, self.cmb_img_2, self.cmb_img_3,
+                            self.cmb_img_4, self.cmb_img_5, self.cmb_img_6]
+        self.chk_imgs = [   self.check_image_1, self.check_image_2, self.check_image_3,
+                            self.check_image_4, self.check_image_5, self.check_image_6]
+        for cmb in self.cmb_imgs:
+            cmb.addItems(['None'] + VISION_TOPICS)
+            cmb.currentIndexChanged.connect(self.cmb_imgs_changed)
+        for chk in self.chk_imgs:
+            chk.stateChanged.connect(self.chk_imgs_changed)
+        self.sub_imgs = [None]*6
+        self.chk_imgs_cbs = [   self.img1_cb, self.img2_cb, self.img3_cb, 
+                                self.img4_cb, self.img5_cb, self.img6_cb]
+
         self.setFocus()
     
     def pos_to_list(self):
@@ -125,11 +163,56 @@ class LarcGuiController(QMainWindow):
         str_list += str(self.spin_wrist_x.value()) + ", "
         str_list += str(self.spin_wrist_y.value()) + "]"
         return str_list
+
+    def msg_to_pix(self, msg, size):
+        img = self.cv_bridge.imgmsg_to_cv2(msg, "bgr8")
+        img = cv2.resize(img,size)
+        frame = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)        
+        img = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
+        pix = QPixmap.fromImage(img)
+        return pix
+
     ### ROS Callbacks
     def sub_state_base_callback(self, msg):
         self.joint_states = msg
+    def img1_cb(self, msg):
+        self.lbl_image_1.setPixmap(self.msg_to_pix(msg, (320,240)))
+    def img2_cb(self, msg):
+        self.lbl_image_2.setPixmap(self.msg_to_pix(msg, (320,240)))
+    def img3_cb(self, msg):
+        self.lbl_image_3.setPixmap(self.msg_to_pix(msg, (320,240)))
+    def img4_cb(self, msg):
+        self.lbl_image_4.setPixmap(self.msg_to_pix(msg, (320,240)))
+    def img5_cb(self, msg):
+        self.lbl_image_5.setPixmap(self.msg_to_pix(msg, (320,240)))
+    def img6_cb(self, msg):
+        self.lbl_image_6.setPixmap(self.msg_to_pix(msg, (640,480)))
     
     ### SLOTS
+    def chk_imgs_changed(self, val):
+        cmb_idx = int(self.sender().objectName()[-1])-1
+        self.cmb_imgs[cmb_idx].setEnabled(not val)
+        topic = self.cmb_imgs[cmb_idx].currentText()
+        if topic != 'None':
+            if val:
+                topic = self.cmb_imgs[cmb_idx].currentText()
+                self.sub_imgs[cmb_idx] = rospy.Subscriber(topic, Image, self.chk_imgs_cbs[cmb_idx])
+            else:
+                self.sub_imgs[cmb_idx].unregister()
+        else:
+            if val:
+                self.sender().setCheckState(False)
+
+    def cmb_imgs_changed(self, val):
+        # cmb_idx = int(self.sender().objectName()[-1])-1
+        # top_idx = val
+        topic = self.sender().currentText()
+        if topic != 'None':
+            for cmb in self.cmb_imgs:
+                if self.sender() != cmb and topic==cmb.currentText():
+                    self.sender().setCurrentIndex(0)
+                    break
+
     ## Sliders
     def slider_dx_valueChanged(self, value):
         dx = value/1000.0
@@ -139,6 +222,23 @@ class LarcGuiController(QMainWindow):
         self.pub_wrist_y.publish(-1.57-alpha)  
         self.pub_zipper.publish(dl)
     ## Buttons
+    def btn_fsm_clicked(self):
+        id_btn = self.sender().objectName()
+        if id_btn=='btn_fsm_idle':
+            self.pub_fsm_start.publish(0)
+        if id_btn=='btn_fsm_init_pos':
+            self.pub_fsm_start.publish(1)
+        elif id_btn=='btn_fsm_cam_pos':
+            self.pub_fsm_start.publish(2)
+        elif id_btn=='btn_fsm_control':
+            self.pub_fsm_start.publish(3)
+        elif id_btn=='btn_fsm_init_control':
+            self.pub_fsm_start.publish(4)
+        elif id_btn=='btn_fsm_start_nc':
+            self.pub_fsm_start.publish(5)
+        elif id_btn=='btn_fsm_start':
+            self.pub_fsm_start.publish(6)
+
     def btn_clear_clicked(self):
         self.txt_list_1.clear()
         self.txt_list_2.clear()
@@ -155,7 +255,6 @@ class LarcGuiController(QMainWindow):
 
     def btn_close_clicked(self):
         self.pub_gripper.publish(0.27)
-
 
     def btn_pr_clicked(self):
         btn_names = self.sender().text()

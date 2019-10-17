@@ -84,7 +84,16 @@ def draw_lines(lines, img):
 rospy.init_node('larc_vision', anonymous=False)
 # rate = rospy.Rate(100.0)
 pub = rospy.Publisher('/larc_vision_info', LarcVisionInfo, queue_size=1)
-frame_bgr_pub = rospy.Publisher("/larc/image/frame_bgr",Image)
+
+frame_bgr_pub = rospy.Publisher("/larc/image/frame_bgr",Image, queue_size=1)
+mask_red_pub = rospy.Publisher("/larc/image/mask_red",Image, queue_size=1)
+mask_blue_pub = rospy.Publisher("/larc/image/mask_blue",Image, queue_size=1)
+mask_green_pub = rospy.Publisher("/larc/image/mask_green",Image, queue_size=1)
+mask_cont_pub = rospy.Publisher("/larc/image/mask_cont",Image, queue_size=1)
+mask_cont_info_pub = rospy.Publisher("/larc/image/mask_cont_info",Image, queue_size=1)
+mask_black_pub = rospy.Publisher("/larc/image/mask_black",Image, queue_size=1)
+mask_black_info_pub = rospy.Publisher("/larc/image/mask_black_info",Image, queue_size=1)
+
 rospy.Subscriber("/larc_settings", LarcSettings, larc_settings_callback)
 
 cv_bridge = CvBridge()
@@ -153,39 +162,6 @@ while not rospy.is_shutdown():
         conts_g, mask_green_2 = get_conts(mask_green)
         mask_green_bgr = cv2.cvtColor(mask_green_2, cv2.COLOR_GRAY2BGR)
 
-        
-
-        # ## BLUE and GREEN
-        # mask_cont = cv2.bitwise_or(mask_blue, mask_green)
-        # mask_cont_bgr = cv2.cvtColor(mask_cont, cv2.COLOR_GRAY2BGR)
-        # mask_cont_bgr_2 = np.copy(mask_cont_bgr)
-        # _, conts_bg, hierarchy = cv2.findContours(mask_cont, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-
-        # cv2.line(mask_cont_bgr, (0, Y_REF), ((mask_cont_bgr.shape[1]-1, Y_REF)), (0, 255, 255), 2)
-        # cv2.line(mask_cont_bgr, (X_REF, 0), (X_REF, (mask_cont_bgr.shape[0]-1)), (0, 255, 255), 2)
-        # cv2.line(mask_cont_bgr, (int(X_REF-S_REF*Y_REF), 0), (X_REF, Y_REF), (0, 0, 255), 3)
-
-        # big_conts = [None, None]
-        # areas = [-1, -1]
-        # for contour in conts_bg:
-        #     area = cv2.moments(contour)['m00']
-        #     if area > 12000:
-        #         if area > areas[0]:
-        #             big_conts[1] = np.copy(big_conts[0])
-        #             areas[1] = areas[0]
-        #             big_conts[0] = np.copy(contour)
-        #             areas[0] = area
-        #         elif area > areas[1]:
-        #             big_conts[1] = np.copy(contour)
-        #             areas[1] = area
-
-        # if areas[1]==-1:
-        #     del areas[1]
-        #     del big_conts[1]
-        # if areas[0]==-1:
-        #     del areas[0]
-        #     del big_conts[0]
-
         ## MIX
         mask_cont = cv2.bitwise_or(mask_blue_2, mask_green_2)
         mask_cont = cv2.bitwise_or(mask_cont, mask_red_2)
@@ -220,7 +196,7 @@ while not rospy.is_shutdown():
         
         slope = float('nan')
         points = np.empty((0,2), dtype=int)
-        if len(big_conts)==2:
+        if len(big_conts)>=2:
             y = corner[1] - 2*Y_STEP
             while y > MIN_Y_WHITE:
                 row = mask_cont[y,:]
@@ -228,10 +204,14 @@ while not rospy.is_shutdown():
                 points = np.append(points, [[(row!=0).argmax(axis=0),y]], axis=0)
                 cv2.circle(mask_cont_bgr, (points[-1][0], points[-1][1]), 5, (255, 0, 255), -1)
                 y -= Y_STEP
-            slope, intercept, r_value, p_value, std_err = stats.linregress(points[:,1],points[:,0])
+            try:
+                slope, intercept, r_value, p_value, std_err = stats.linregress(points[:,1],points[:,0])
+                corner = (points[0][0], corner[1])
+                cv2.circle(mask_cont_bgr, corner, 10, (255, 0, 0), -1)
+            except:
+                pass
             # print(slope)
-            corner = (points[0][0], corner[1])
-            cv2.circle(mask_cont_bgr, corner, 10, (255, 0, 0), -1)
+            
 
         ## Check container color
         
@@ -306,13 +286,20 @@ while not rospy.is_shutdown():
         # vis2 = np.concatenate((mask_green_bgr, mask_blue_bgr), axis=1) # vertically
         # vis = np.concatenate((vis1, vis2), axis=0) # horizontally
 
-        vis1 = np.concatenate((frame_bgr, mask_cont_bgr_2), axis=1) # vertically
-        vis2 = np.concatenate((mask_cont_bgr, mask_black_show), axis=1) # vertically
-        vis = np.concatenate((vis1, vis2), axis=0) # horizontally
+        # vis1 = np.concatenate((frame_bgr, mask_cont_bgr_2), axis=1) # vertically
+        # vis2 = np.concatenate((mask_cont_bgr, mask_black_show), axis=1) # vertically
+        # vis = np.concatenate((vis1, vis2), axis=0) # horizontally
 
-        cv2.imshow('vis',vis)
+        # cv2.imshow('vis',vis)
 
-        # frame_bgr_pub.publish(cv_bridge.cv2_to_imgmsg(frame_bgr, "bgr8"))
+        frame_bgr_pub.publish(cv_bridge.cv2_to_imgmsg(frame_bgr, "bgr8"))
+        mask_red_pub.publish(cv_bridge.cv2_to_imgmsg(mask_red_bgr, "bgr8"))
+        mask_blue_pub.publish(cv_bridge.cv2_to_imgmsg(mask_blue_bgr, "bgr8"))
+        mask_green_pub.publish(cv_bridge.cv2_to_imgmsg(mask_green_bgr, "bgr8"))
+        mask_cont_pub.publish(cv_bridge.cv2_to_imgmsg(mask_cont_bgr_2, "bgr8"))
+        mask_cont_info_pub.publish(cv_bridge.cv2_to_imgmsg(mask_cont_bgr, "bgr8"))
+        # mask_black_pub.publish(cv_bridge.cv2_to_imgmsg(mask_black_2, "bgr8"))
+        mask_black_info_pub.publish(cv_bridge.cv2_to_imgmsg(mask_black_show, "bgr8"))
         
         pub.publish(    frame_counter, black_strip_flag, black_strip_x, black_strip_y,
                         len(big_conts), centers_x, centers_y, slope, corner[0], corner[1],

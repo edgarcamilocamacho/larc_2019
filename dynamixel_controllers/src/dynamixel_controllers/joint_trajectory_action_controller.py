@@ -297,11 +297,11 @@ class JointTrajectoryActionController():
                         else:
                             pos = self.joint_to_controller[joint].pos_rad_to_raw(desired_position)
                             spd = self.joint_to_controller[joint].spd_rad_to_raw(desired_velocity)                        
-                        if joint=="zipper":
-                            print("desired_position " + str(desired_position))
-                            print("pos " + str(pos))
-                            print("desired_velocity " + str(desired_velocity))
-                            print("spd " + str(spd))
+                        # if joint=="zipper":
+                        #     print("desired_position " + str(desired_position))
+                        #     print("pos " + str(pos))
+                        #     print("desired_velocity " + str(desired_velocity))
+                        #     print("spd " + str(spd))
                         vals.append((motor_id, pos, spd))
                     
                 multi_packet[port] = vals

@@ -1,6 +1,11 @@
 # Abrir pinza
 pub_gripper.publish(0.65)
+
 # Posicion inicial
+[0.00, 0.00, 1.10, -0.60, -2.45, 1.60] ## Preparados
+[0.00, 0.00, 1.12, -1.10, -2.51, 1.59] ## Listos
+
+# Posicion buscar
 [0.0, 0.0, 0.1, 1.2, 0.4, 1.57]
 [-0.2, 0.001, -0.3, 1.41, 0.0, 1.57]
 
