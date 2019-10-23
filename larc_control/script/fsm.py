@@ -9,8 +9,14 @@ import time
 
 from geometry_msgs.msg import Vector3
 from std_msgs.msg import Float32MultiArray, Float64, String
+import rospkg
 
-from var import *
+rospack = rospkg.RosPack()
+var_path = rospack.get_path('larc_control')
+var_path = var_path + '/script/var.py'
+
+# from var import *
+execfile(var_path)
 
 BTN1_PIN = 431
 BTN2_PIN = 432
@@ -107,7 +113,7 @@ class Fsm:
     def s_idle(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
             self.pub_cmd_vel.publish(0.0, 0.0, 0.0)
-            pass
+            execfile(var_path)
         self.timer1 += 1
         if self.fsm_start_signal == 1 or (not self.button1.read()):
             self.ret_from_init_pos = self.s_idle
@@ -144,6 +150,7 @@ class Fsm:
 
     def init_position_1(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1: # Recien llego a este estado?
+            self.pub_gripper.publish(0.25)
             self.msg.data = init_positions[1]
             self.pub_move.publish(self.msg)
             self.timer1 = 0
