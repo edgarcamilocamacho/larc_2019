@@ -6,7 +6,7 @@ import yaml
 
 import rospy
 import rospkg
-from std_msgs.msg import Float64, String
+from std_msgs.msg import Float64, String, Bool
 from larc_settings.msg import LarcSettings
 
 from PyQt5.QtWidgets import QApplication, QDialog, QMainWindow, QFileDialog, QWidget
@@ -38,7 +38,8 @@ class LarcSettingsGui(QMainWindow):
         ## ROS
         rospy.init_node('larc_settings_gui')
         self.config_pub = rospy.Publisher("/larc_settings", LarcSettings, queue_size = 1)
-    
+        self.gui_pub = rospy.Publisher("/larc/settings/gui_active", Bool, queue_size = 1)
+
         ## Connections
         self.sld_max_hsv_blue_h.valueChanged.connect(self.hsv_value_changed)
         self.sld_max_hsv_blue_s.valueChanged.connect(self.hsv_value_changed)
@@ -75,6 +76,18 @@ class LarcSettingsGui(QMainWindow):
         self.btn_publish.clicked.connect(self.btn_publish_clicked)
         self.btn_save.clicked.connect(self.btn_save_clicked)
 
+        self.timer_start = QTimer()
+        self.timer_start.timeout.connect(self.timer_start_timeout)
+        self.timer_start.start(300)
+
+    def timer_start_timeout(self):
+        self.gui_pub.publish(True)
+        self.timer_start.stop()
+
+    def closeEvent(self, event):
+        self.gui_pub.publish(False)
+        event.accept()
+
     def hsv_value_changed(self):
         self.update_msg()
         self.update_gui()
@@ -82,13 +95,13 @@ class LarcSettingsGui(QMainWindow):
 
     def btn_publish_clicked(self):
         self.config_pub.publish(self.settings_msg)
-    
+
     def btn_save_clicked(self):
         self.update_config()
         with open(self.config_path, 'w') as file:
             yaml.dump(self.config, file)
         self.btn_publish_clicked()
-    
+
     def update_config(self):
         self.config['max_hsv_blue'] = self.settings_msg.max_hsv_blue
         self.config['min_hsv_blue'] = self.settings_msg.min_hsv_blue
@@ -116,7 +129,7 @@ class LarcSettingsGui(QMainWindow):
         self.settings_msg.ref_x = self.config['ref_x']
         self.settings_msg.ref_y = self.config['ref_y']
         self.settings_msg.ref_s = self.config['ref_s']
-    
+
     def update_gui(self):
         self.lbl_max_hsv_blue_h.setText( 'H: {}'.format(self.sld_max_hsv_blue_h.value()) )
         self.lbl_max_hsv_blue_s.setText( 'S: {}'.format(self.sld_max_hsv_blue_s.value()) )
@@ -157,7 +170,7 @@ class LarcSettingsGui(QMainWindow):
         self.settings_msg.min_hsv_blue[0] = self.sld_min_hsv_blue_h.value()
         self.settings_msg.min_hsv_blue[1] = self.sld_min_hsv_blue_s.value()
         self.settings_msg.min_hsv_blue[2] = self.sld_min_hsv_blue_v.value()
-        
+
         self.settings_msg.max_hsv_green[0] = self.sld_max_hsv_green_h.value()
         self.settings_msg.max_hsv_green[1] = self.sld_max_hsv_green_s.value()
         self.settings_msg.max_hsv_green[2] = self.sld_max_hsv_green_v.value()
@@ -178,7 +191,7 @@ class LarcSettingsGui(QMainWindow):
         self.settings_msg.min_hsv_black[0] = self.sld_min_hsv_black_h.value()
         self.settings_msg.min_hsv_black[1] = self.sld_min_hsv_black_s.value()
         self.settings_msg.min_hsv_black[2] = self.sld_min_hsv_black_v.value()
-        
+
         self.settings_msg.ref_x = self.sld_ref_x.value()
         self.settings_msg.ref_y = self.sld_ref_y.value()
         self.settings_msg.ref_s = self.sld_ref_s.value() / 100.0
@@ -190,7 +203,7 @@ class LarcSettingsGui(QMainWindow):
         self.sld_min_hsv_blue_h.setValue( self.settings_msg.min_hsv_blue[0] )
         self.sld_min_hsv_blue_s.setValue( self.settings_msg.min_hsv_blue[1] )
         self.sld_min_hsv_blue_v.setValue( self.settings_msg.min_hsv_blue[2] )
-        
+
         self.sld_max_hsv_green_h.setValue( self.settings_msg.max_hsv_green[0] )
         self.sld_max_hsv_green_s.setValue( self.settings_msg.max_hsv_green[1] )
         self.sld_max_hsv_green_v.setValue( self.settings_msg.max_hsv_green[2] )
@@ -220,5 +233,5 @@ class LarcSettingsGui(QMainWindow):
 app = QApplication(sys.argv)
 ui = LarcSettingsGui()
 ui.setWindowTitle('LARC - GUI Configuration')
-ui.show()   
+ui.show()
 sys.exit(app.exec_())

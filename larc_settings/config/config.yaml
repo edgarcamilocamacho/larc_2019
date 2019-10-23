@@ -3,10 +3,10 @@ max_hsv_blue: [270, 100, 100]
 max_hsv_green: [180, 100, 100]
 max_hsv_red: [340, 100, 100]
 min_hsv_black: [0, 0, 0]
-min_hsv_blue: [180, 7, 10]
-min_hsv_green: [60, 12, 11]
-min_hsv_red: [20, 8, 22]
+min_hsv_blue: [185, 41, 19]
+min_hsv_green: [60, 26, 11]
+min_hsv_red: [20, 100, 100]
 name: LarcRobot
 ref_s: 0.25
-ref_x: 125
+ref_x: 150
 ref_y: 346

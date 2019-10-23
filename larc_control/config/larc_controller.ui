@@ -1184,7 +1184,7 @@ QGroupBox::title {
       <x>1080</x>
       <y>10</y>
       <width>131</width>
-      <height>241</height>
+      <height>301</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -1294,12 +1294,25 @@ QGroupBox::title {
       <string>Start</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="btn_fsm_stop">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>230</y>
+       <width>111</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Stop</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="btn_control">
     <property name="geometry">
      <rect>
       <x>1080</x>
-      <y>260</y>
+      <y>320</y>
       <width>131</width>
       <height>201</height>
      </rect>

@@ -42,9 +42,9 @@ class LarcGuiController(QMainWindow):
         loadUi(self.larc_settings_path+'/config/larc_controller.ui', self)
 
         ### LOCAL VARIABLES
-        self.key_status = { QtCore.Qt.Key_A:False, 
-                            QtCore.Qt.Key_W:False, 
-                            QtCore.Qt.Key_D:False, 
+        self.key_status = { QtCore.Qt.Key_A:False,
+                            QtCore.Qt.Key_W:False,
+                            QtCore.Qt.Key_D:False,
                             QtCore.Qt.Key_S:False,
                             QtCore.Qt.Key_Q:False,
                             QtCore.Qt.Key_E:False, }
@@ -75,7 +75,7 @@ class LarcGuiController(QMainWindow):
         self.srv_tor_gripper = rospy.ServiceProxy('/gripper/torque_enable', TorqueEnable)
 
         self.sub_state_base = rospy.Subscriber('/joint_states', JointState, self.sub_state_base_callback)
-        
+
         self.tf_listener = tf.TransformListener()
         self.ros_rate = rospy.Rate(10.0)
 
@@ -125,6 +125,7 @@ class LarcGuiController(QMainWindow):
         self.btn_fsm_init_control.clicked.connect(self.btn_fsm_clicked)
         self.btn_fsm_start.clicked.connect(self.btn_fsm_clicked)
         self.btn_fsm_start_nc.clicked.connect(self.btn_fsm_clicked)
+        self.btn_fsm_stop.clicked.connect(self.btn_fsm_clicked)
         ## Checks
         self.check_tor_base.stateChanged.connect(self.check_tor_base_stateChanged)
         self.check_tor_zipper.stateChanged.connect(self.check_tor_zipper_stateChanged)
@@ -149,11 +150,11 @@ class LarcGuiController(QMainWindow):
         for chk in self.chk_imgs:
             chk.stateChanged.connect(self.chk_imgs_changed)
         self.sub_imgs = [None]*6
-        self.chk_imgs_cbs = [   self.img1_cb, self.img2_cb, self.img3_cb, 
+        self.chk_imgs_cbs = [   self.img1_cb, self.img2_cb, self.img3_cb,
                                 self.img4_cb, self.img5_cb, self.img6_cb]
 
         self.setFocus()
-    
+
     def pos_to_list(self):
         str_list = "["
         str_list += str(self.spin_base.value()) + ", "
@@ -167,7 +168,7 @@ class LarcGuiController(QMainWindow):
     def msg_to_pix(self, msg, size):
         img = self.cv_bridge.imgmsg_to_cv2(msg, "bgr8")
         img = cv2.resize(img,size)
-        frame = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)        
+        frame = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = QImage(frame, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
         pix = QPixmap.fromImage(img)
         return pix
@@ -187,7 +188,7 @@ class LarcGuiController(QMainWindow):
         self.lbl_image_5.setPixmap(self.msg_to_pix(msg, (320,240)))
     def img6_cb(self, msg):
         self.lbl_image_6.setPixmap(self.msg_to_pix(msg, (640,480)))
-    
+
     ### SLOTS
     def chk_imgs_changed(self, val):
         cmb_idx = int(self.sender().objectName()[-1])-1
@@ -219,7 +220,7 @@ class LarcGuiController(QMainWindow):
         alpha = np.arctan(dx/self.L)
         dl = np.sqrt(dx**2+self.L**2)-self.L
         self.pub_base.publish(-alpha)
-        self.pub_wrist_y.publish(-1.57-alpha)  
+        self.pub_wrist_y.publish(-1.57-alpha)
         self.pub_zipper.publish(dl)
     ## Buttons
     def btn_fsm_clicked(self):
@@ -238,6 +239,8 @@ class LarcGuiController(QMainWindow):
             self.pub_fsm_start.publish(5)
         elif id_btn=='btn_fsm_start':
             self.pub_fsm_start.publish(6)
+        elif id_btn=='btn_fsm_stop':
+            self.pub_fsm_start.publish(-1)
 
     def btn_clear_clicked(self):
         self.txt_list_1.clear()
@@ -282,7 +285,7 @@ class LarcGuiController(QMainWindow):
         elif btn_names == 'SW-':
             self.spin_shoulder.setValue(self.spin_shoulder.value()-0.01)
             self.spin_wrist_x.setValue(self.spin_wrist_x.value()-0.01)
-            
+
     def btn_send_1_clicked(self):
         jv = eval(self.txt_list_1.toPlainText())
         msg = Float32MultiArray()
@@ -345,9 +348,9 @@ class LarcGuiController(QMainWindow):
     def btn_pub_wrist_x_clicked(self):
         self.pub_wrist_x.publish(self.spin_wrist_x.value())
     def btn_pub_wrist_y_clicked(self):
-        self.pub_wrist_y.publish(self.spin_wrist_y.value())   
+        self.pub_wrist_y.publish(self.spin_wrist_y.value())
     def btn_pub_gripper_clicked(self):
-        self.pub_gripper.publish(self.spin_gripper.value())   
+        self.pub_gripper.publish(self.spin_gripper.value())
     def btn_control_clicked(self):
         self.setFocus()
     def btn_update_clicked(self):
@@ -389,9 +392,9 @@ class LarcGuiController(QMainWindow):
         self.check_tor_wrist_x.setCheckState(state)
         self.check_tor_wrist_y.setCheckState(state)
         self.check_tor_gripper.setCheckState(state)
-        
+
     ## Spine slots
-    
+
     ## Timer slots
     def timer_keys_timeout(self):
         if self.check_pub_cmd_vel.checkState():
@@ -411,13 +414,13 @@ class LarcGuiController(QMainWindow):
                 self.pub_cmd_vel.publish(0.0, 0.0, angular_speed)
             else:
                 self.pub_cmd_vel.publish(0.0, 0.0, 0.0)
-    
+
     ### EVENTS
     def keyPressEvent(self, event):
         key = event.key()
         if key in self.key_status:
             self.key_status[key] = True
-    
+
     def keyReleaseEvent(self, event):
         key = event.key()
         if key in self.key_status:
@@ -426,5 +429,5 @@ class LarcGuiController(QMainWindow):
 app = QApplication(sys.argv)
 ui = LarcGuiController()
 ui.setWindowTitle('LARC Controller')
-ui.show()   
+ui.show()
 sys.exit(app.exec_())

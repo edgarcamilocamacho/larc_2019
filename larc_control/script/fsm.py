@@ -1,7 +1,7 @@
 import rospy
 from periphery import GPIO
 
- 
+
 from motors_bridge import MotorsBridge
 from PID import PID
 import math
@@ -42,7 +42,7 @@ class Fsm:
         self.pid_y.SetPoint = 0.0
         self.pid_y.setWindup(20.0)
         self.meas_y_1 = 0
-        
+
         ## Variables
         self.timer1 = 0
         self.count_zero = 0
@@ -81,17 +81,32 @@ class Fsm:
         if self.state != self.state_1:
             rospy.loginfo('Entering to state "{}"'.format(self.state.__name__))
         self.fsm_start_signal = fsm_start_signal
-        next_state = self.state(vision_info, joint_state, is_moving)
+        if self.fsm_start_signal == -1:
+            next_state = self.s_idle
+        elif not(self.state==self.s_idle or self.state==self.init_position_0 or self.state==self.s_cam_position) and ( (not self.button1.read()) or (not self.button2.read()) ):
+            next_state = self.s_stop
+        else:
+            next_state = self.state(vision_info, joint_state, is_moving)
         self.state_1 = self.state
         self.state = next_state
-    
+
+    def s_stop(self, vision_info, joint_state, is_moving):
+        if self.state != self.state_1:
+            self.pub_cmd_vel.publish(0.0, 0.0, 0.0)
+            self.timer1 = 0
+        self.timer1 += 1
+        if self.timer1<45:
+            return self.s_stop
+        else:
+            return self.s_idle
+
     def s_start_state(self, vision_info, joint_state, is_moving):
         self.timer1 = 0
         return self.s_idle
 
     def s_idle(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
-            # self.mb.go_to_position(['rotating_base'], [0.0])
+            self.pub_cmd_vel.publish(0.0, 0.0, 0.0)
             pass
         self.timer1 += 1
         if self.fsm_start_signal == 1 or (not self.button1.read()):
@@ -124,9 +139,9 @@ class Fsm:
         self.timer1 += 1
         if self.timer1<20 or is_moving:
             return self.init_position_0
-        else:    
+        else:
             return self.init_position_1
-        
+
     def init_position_1(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1: # Recien llego a este estado?
             self.msg.data = init_positions[1]
@@ -135,9 +150,9 @@ class Fsm:
         self.timer1 += 1
         if self.timer1<20 or is_moving:
             return self.init_position_1
-        else:    
+        else:
             return self.ret_from_init_pos
-    
+
     def s_cam_position(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1: # Recien llego a este estado?
             self.msg.data = cam_pos
@@ -146,7 +161,7 @@ class Fsm:
         self.timer1 += 1
         if self.timer1<20 or is_moving:
             return self.s_cam_position
-        else:    
+        else:
             return self.ret_from_cam_pos
 
     def s_forward1(self, vision_info, joint_state, is_moving):
@@ -164,7 +179,7 @@ class Fsm:
             return self.s_forward3
         else:
             return self.s_forward2
-        
+
     def s_forward3(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1: # Recien llego a este estado?
             self.pub_cmd_vel.publish(0.0, 1.5, 0.0)
@@ -198,7 +213,7 @@ class Fsm:
             return self.s_right
         else:
             return self.s_wait1
-    
+
     def s_left(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1: # Recien llego a este estado?
             self.pub_cmd_vel.publish(-2.0, 0.0, 0.0)
@@ -206,7 +221,7 @@ class Fsm:
             return self.s_left
         else:
             return self.s_wait1
-    
+
     def s_wait1(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1: # Recien llego a este estado?
             self.timer1 = 0
@@ -288,14 +303,14 @@ class Fsm:
         # print('meas_w: ' + str(meas_w) + ', cw: ' + str(cw))
         # print('meas_x: ' + str(meas_x) + ', cx: ' + str(cx))
         # print('meas_y: ' + str(meas_y) + ', cy: ' + str(cy))
-        
+
         if self.count_zero<=15:
             self.pub_cmd_vel.publish(cx, cy, cw)
             return self.s_control2
         else:
             self.pub_cmd_vel.publish(0.0, 0.0, 0.0)
             return self.ret_from_control
-        
+
     ## CHOOSE
     def choose_1(self, vision_info, joint_state, is_moving):
         self.pub_gripper.publish(0.65)
@@ -307,8 +322,8 @@ class Fsm:
                                     pick_routines[self.ctp][0] ]
             return self.s_pick_0
         else:
-            return self.s_end_state
-    
+            return self.s_idle
+
     def choose_2(self, vision_info, joint_state, is_moving):
         if self.ctp[0]=='0' or self.ctp[0]=='2' or self.ctp[0]=='4':
             rospy.loginfo('Picking the left one, color: {}'.format(self.left_color))
@@ -362,7 +377,7 @@ class Fsm:
         self.timer1 += 1
         if self.timer1<SRC_TIME or is_moving:
             return self.s_pick_1
-        else:    
+        else:
             self.ret_state.append(self.s_pick_2)
             return self.s_close_gripper
     def s_pick_2(self, vision_info, joint_state, is_moving):
@@ -373,9 +388,9 @@ class Fsm:
         self.timer1 += 1
         if self.timer1<SRC_TIME or is_moving:
             return self.s_pick_2
-        else:    
+        else:
             return self.choose_2
-    
+
     # release
     def s_release_0(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
@@ -385,7 +400,7 @@ class Fsm:
         self.timer1 += 1
         if self.timer1<SRC_TIME or is_moving:
             return self.s_release_0
-        else:    
+        else:
             return self.s_release_1
     def s_release_1(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
@@ -395,7 +410,7 @@ class Fsm:
         self.timer1 += 1
         if self.timer1<SRC_TIME or is_moving:
             return self.s_release_1
-        else:    
+        else:
             self.ret_state.append(self.s_release_2)
             return self.s_open_gripper
     def s_release_2(self, vision_info, joint_state, is_moving):
@@ -406,7 +421,7 @@ class Fsm:
         self.timer1 += 1
         if self.timer1<5 or is_moving:
             return self.s_release_2
-        else:    
+        else:
             return self.s_release_3
     def s_release_3(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
@@ -416,20 +431,20 @@ class Fsm:
         self.timer1 += 1
         if self.timer1<SRC_TIME or is_moving:
             return self.s_release_3
-        else:    
+        else:
             return self.choose_1
 
     ## CONTENEDORES
     def s_close_gripper(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
-            self.pub_gripper.publish(0.27)
+            self.pub_gripper.publish(0.25)
             self.timer1 = 0
         self.timer1 += 1
         if self.timer1<10:
             return self.s_close_gripper
-        else:    
+        else:
             return self.ret_state.pop()
-    
+
     def s_open_gripper(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
             self.pub_gripper.publish(0.35)
@@ -437,9 +452,9 @@ class Fsm:
         self.timer1 += 1
         if self.timer1<2:
             return self.s_open_gripper
-        else:    
+        else:
             return self.s_open_gripper_1
-    
+
     def s_open_gripper_1(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
             self.pub_gripper.publish(0.40)
@@ -447,9 +462,9 @@ class Fsm:
         self.timer1 += 1
         if self.timer1<2:
             return self.s_open_gripper_1
-        else:    
+        else:
             return self.s_open_gripper_3
-    
+
     def s_open_gripper_2(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
             self.pub_gripper.publish(0.45)
@@ -457,9 +472,9 @@ class Fsm:
         self.timer1 += 1
         if self.timer1<2:
             return self.s_open_gripper_2
-        else:    
+        else:
             return self.s_open_gripper_3
-    
+
     def s_open_gripper_3(self, vision_info, joint_state, is_moving):
         if self.state != self.state_1:
             self.pub_gripper.publish(0.65)
@@ -467,8 +482,8 @@ class Fsm:
         self.timer1 += 1
         if self.timer1<4:
             return self.s_open_gripper_3
-        else:    
+        else:
             return self.ret_state.pop()
-    
+
     def s_end_state(self, vision_info, joint_state, is_moving):
         return self.s_end_state

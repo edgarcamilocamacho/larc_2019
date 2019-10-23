@@ -101,6 +101,7 @@ def go_to_pos(jv):
         return
     error = 10.0
     while error>0.07:
+        rospy.logwarn(rospy.get_caller_id() + 'error' + str(error))
         if error!=10.0:
             rospy.logwarn(rospy.get_caller_id() + ' Plan not executed, retrying...')
         execute_plan( plan )
