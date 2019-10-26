@@ -94,25 +94,24 @@ def execute_plan(plan, wait=True):
     group.execute(plan, wait=wait)
 
 def go_to_pos(jv):
-
-    plan = plan_to_joint_values( jv )
-    if plan==None:
-        rospy.logwarn(rospy.get_caller_id() + ' No plan. plan=None')
-        return
+    executed = True
     error = 10.0
-    while error>0.07:
-        rospy.logwarn(rospy.get_caller_id() + 'error' + str(error))
+    while error>0.2:
+        plan = plan_to_joint_values( jv )
+        if plan==None:
+            executed = False
+            break
         if error!=10.0:
             rospy.logwarn(rospy.get_caller_id() + ' Plan not executed, retrying...')
+        error = np.sqrt(np.sum((get_current_joint_values()-np.array(jv))**2))
+        rospy.logwarn(rospy.get_caller_id() + ' error before: ' + str(error))
         execute_plan( plan )
         error = np.sqrt(np.sum((get_current_joint_values()-np.array(jv))**2))
-    rospy.logwarn(rospy.get_caller_id() + ' Plan executed')
-
-    # error = 10.0
-    # while error>0.07:
-    #     execute_plan( plan_to_joint_values( jv ) )
-    #     error = np.sqrt(np.sum((get_current_joint_values()-np.array(jv))**2))
-    #     print('error='+str(error))
+        rospy.logwarn(rospy.get_caller_id() + ' error after: ' + str(error))
+    if executed:
+        rospy.logwarn(rospy.get_caller_id() + ' Plan executed')
+    else:
+        rospy.logwarn(rospy.get_caller_id() + ' No plan. plan=None')
 
 def go_to_pos_callback(msg):
     movement_flag_publisher.publish(True)

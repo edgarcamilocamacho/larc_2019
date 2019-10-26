@@ -29,6 +29,6 @@ joint_limits:
     max_acceleration: 0
   zipper:
     has_velocity_limits: true
-    max_velocity: 7
+    max_velocity: 3
     has_acceleration_limits: false
     max_acceleration: 0

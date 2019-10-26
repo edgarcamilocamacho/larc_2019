@@ -349,32 +349,37 @@ class Fsm:
     def choose_2(self, vision_info, joint_state, is_moving):
         if self.ctp[0]=='0' or self.ctp[0]=='2' or self.ctp[0]=='4':
             rospy.loginfo('Picking the left one, color: {}'.format(self.left_color))
-            if self.left_color=='green':
-                #Si  no quedan elementos de la lista (Si ya puse 7 en la fila).... Que hago? Acabo? 
-                # routine = release_green_routines.pop(0)
+            if self.left_color=='green' and self.count_green>=7:
+                routine = release_red_routines[self.count_red]
+                self.count_red += 1
+            elif self.left_color=='blue' and self.count_blue>=7:
+                routine = release_red_routines[self.count_red]
+                self.count_red += 1
+            elif self.left_color=='green':
                 routine = release_green_routines[self.count_green]
                 self.count_green += 1
             elif self.left_color=='blue':
-                # routine = release_blue_routines.pop(0)
                 routine = release_blue_routines[self.count_blue]
                 self.count_blue += 1
             else:
-                # routine = release_red_routines.pop(0)
                 routine = release_red_routines[self.count_red]
                 self.count_red += 1
 
         elif self.ctp[0]=='1' or self.ctp[0]=='3' or self.ctp[0]=='5':
             rospy.loginfo('Picking the right one, color: {}'.format(self.right_color))
+            if self.right_color=='green' and self.count_green>=7:
+                routine = release_red_routines[self.count_red]
+                self.count_red += 1
+            elif self.right_color=='blue' and self.count_blue>=7:
+                routine = release_red_routines[self.count_red]
+                self.count_red += 1
             if self.right_color=='green':
-                # routine = release_green_routines.pop(0)
                 routine = release_green_routines[self.count_green]
                 self.count_green += 1
             elif self.right_color=='blue':
-                # routine = release_blue_routines.pop(0)
                 routine = release_blue_routines[self.count_blue]
                 self.count_blue += 1
             else:
-                # routine = release_red_routines.pop(0)
                 routine = release_red_routines[self.count_red]
                 self.count_red += 1
         self.release_phases = [routine[0], routine[1], routine[2], routine[0]]
@@ -404,6 +409,10 @@ class Fsm:
             rospy.loginfo('Left color: "{}"'.format(self.left_color))
             rospy.loginfo('Right color: "{}"'.format(self.right_color))
             if (self.ctp=='203' and self.left_color=='red') or (self.ctp=='303' and self.right_color=='red'):
+                return self.choose_1
+            if self.ctp=='303' and self.left_color=='green' and self.count_green>=7:
+                return self.choose_1
+            if self.ctp=='303' and self.left_color=='blue' and self.count_blue>=7:
                 return self.choose_1
             return self.s_pick_1
     def s_pick_1(self, vision_info, joint_state, is_moving):

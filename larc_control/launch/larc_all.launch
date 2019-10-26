@@ -1,0 +1,11 @@
+<launch>
+
+  <include file="$(find larc_motors_control)/launch/movement.launch">
+  </include>
+
+  <include file="$(find larc_vision)/launch/larc_vision.launch">
+  </include>
+
+  <node name="larc_fsm" pkg="larc_control" type="larc_fsm.py"/>
+
+</launch>

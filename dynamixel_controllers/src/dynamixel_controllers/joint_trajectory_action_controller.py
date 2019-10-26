@@ -294,6 +294,8 @@ class JointTrajectoryActionController():
                         if joint=="zipper":
                             pos = self.joint_to_controller[joint].pos_rad_to_raw(52.36*desired_position)
                             spd = self.joint_to_controller[joint].spd_rad_to_raw(52.36*desired_velocity/3.0)
+                            if spd>100:
+                                spd=100
                         else:
                             pos = self.joint_to_controller[joint].pos_rad_to_raw(desired_position)
                             spd = self.joint_to_controller[joint].spd_rad_to_raw(desired_velocity)                        

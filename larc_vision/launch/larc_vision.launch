@@ -1,7 +1,7 @@
 <launch>
 
-  <node name="larc_vision_node" pkg="larc_vision" type="larc_vision_node.py"/>
+  <node name="larc_vision_node" pkg="larc_vision" type="larc_vision_node.py" required="true"/>
 
-  <node name="larc_settings_node" pkg="larc_settings" type="larc_settings_node.py"/>
+  <node name="larc_settings_node" pkg="larc_settings" type="larc_settings_node.py" required="true"/>
 
 </launch>

@@ -6,4 +6,4 @@ robotic_arm_controller:
   joint_trajectory_action_node:
     min_velocity: 0.2
     contraints:
-      goal_time: 2.0
+      goal_time: 5.0

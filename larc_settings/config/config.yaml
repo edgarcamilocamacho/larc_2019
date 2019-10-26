@@ -8,5 +8,5 @@ min_hsv_green: [60, 25, 22]
 min_hsv_red: [20, 23, 26]
 name: LarcRobot
 ref_s: 0.25
-ref_x: 140
+ref_x: 151
 ref_y: 346
