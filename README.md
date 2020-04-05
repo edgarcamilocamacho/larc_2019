@@ -26,7 +26,7 @@ $ catkin_make
 To use, ensure to initialize the workspace:
 
 ``` bash
-$ mkdir -p ~/ros/larc_ws/
+$ cd ~/ros/larc_ws/
 $ source devel/setup.bash
 ```
 
