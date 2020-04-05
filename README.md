@@ -61,7 +61,7 @@ $ rosrun larc_control larc_fsm.py
 To control the robot manually and visualize the camera image and masks, start the controller node:
 
 ``` bash
-$ rosrun ros_control larc_controller.py
+$ rosrun larc_control larc_controller.py
 ```
 
 ## Settings:
@@ -69,7 +69,7 @@ $ rosrun ros_control larc_controller.py
 In order to adjust the vision settings, start the settings gui node:
 
 ``` bash
-$ rosrun ros_settings larc_settings_gui.py
+$ rosrun larc_settings larc_settings_gui.py
 ```
 
 
