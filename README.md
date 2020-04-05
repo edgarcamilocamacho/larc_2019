@@ -16,7 +16,7 @@ SIOC:
 Create the workspace, clone the repository and build:
 
 ``` bash
-$ mkdir -p ~/ros/larc_ws/scr
+$ mkdir -p ~/ros/larc_ws/src
 $ cd ~/ros/larc_ws/src/
 $ git clone https://github.com/edgarcamilocamacho/larc_2019
 $ cd ..
